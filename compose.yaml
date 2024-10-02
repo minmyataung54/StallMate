@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend-auth-service
+    ports:
+      - "3000:3000"  # Map container's port 8080 to host's port 8080
+    environment:
+      - NODE_ENV=testing  # Set any additional environment variables here
+    volumes:
+      - .:/app  # Mount project folder so you can make changes on your local system
+      - /app/node_modules  # Prevent overwriting node_modules from local system
+    command: npm start  # Runs the start command defined in your package.json
+    depends_on:
+      - mongo  # MongoDB will start but doesn't need to be used right away
+
+  # MongoDB Service (Optional - not connected yet)
+  mongo:
+    image: mongo:latest
+    container_name: mongo-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:  # Volume for persistent MongoDB data storage
