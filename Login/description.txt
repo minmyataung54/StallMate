@@ -1,0 +1,5 @@
+_id: Automatically generated unique identifier for the document.
+username: The user’s display name or chosen username.
+google_id: The unique ID assigned to the user by Google. This is used to identify users logging in via Google.
+email: The email address associated with the Google account.
+created_at: The date and time when the account was first created.
