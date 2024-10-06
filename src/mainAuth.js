@@ -27,6 +27,8 @@ const app = express();
 
 connectDB();
 
+// const date = Date.now();
+
 passportConfig(app);
 app.use('/',homeRouter);
 app.use('/auth',authRouter);
@@ -34,4 +36,6 @@ app.use('/auth',authRouter);
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
+    // console.log(`${date}`);
+    
 })
