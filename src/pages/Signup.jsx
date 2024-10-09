@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import signup_img from '../assets/signup_image.png';
 import { useState } from 'react';
+import fblogo from '../assets/fb-button.png';
+import gglogo from '../assets/gg-button.png';
+import aplogo from '../assets/apple-button.png'
 
 
 
@@ -62,14 +65,16 @@ const Signup = () => {
     ];
 
     return (
-        <div className="container d-flex flex-column justify-content-center align-items-center vh-100">
-            <img src={signup_img} alt="Signup" className="img-fluid mx-auto d-block" />
+        <div className="container d-flex flex-column justify-content-center align-items-center vh-100 w-100">
+            <img src={signup_img} alt="Signup" className="img-fluid mx-auto d-block" 
+            style={{width:'252px', height:'234.05px'}}/>
             <p className="display-4 text-white my-4 font-weight-login">Create a New Account</p> 
             <form onSubmit={handleSubmit} className="container mt-4">
-                <div className="mb-3">
+                <div className="mb-4">
                     <div className="input-group">
                         <select
-                            className="form-control-lg form-select custom-input"
+                            className="form-control form-select custom-input border-0"
+                            style={{ flex: '0 0 100px', height: '60px' }}
                             value={countryCode}
                             onChange={(e) => setCountryCode(e.target.value)}
                         >
@@ -80,8 +85,9 @@ const Signup = () => {
                             ))}
                         </select>
                         <input
-                            type="tel"
-                            className="form-control-lg custom-input"
+                            type="text"
+                            className="form-control custom-input border-0"
+                            style={{ flex: '1', height: '60px' }}
                             id="phone"
                             placeholder="00 000 0000"
                             value={phoneNumber}
@@ -89,10 +95,11 @@ const Signup = () => {
                         />
                     </div>
                 </div>
-                <div className="mb-3">
+                <div className="mb-4">
                     <input
                         type="email"
-                        className="form-control form-control-lg custom-input"
+                        className="form-control form-control-lg custom-input border-0"
+                        style={{width:'390px', height:'60px'}}
                         id="email"
                         placeholder="Enter email"
                         value={email}
@@ -102,7 +109,8 @@ const Signup = () => {
                 <div className="mb-3">
                     <input
                         type="text"
-                        className="form-control form-control-lg custom-input"
+                        className="form-control form-control-lg custom-input border-0"
+                        style={{width:'390px', height:'60px'}}
                         id="fullName"
                         placeholder="Enter full name"
                         value={fullName}
@@ -123,7 +131,7 @@ const Signup = () => {
                         </label>
                     </div>
                 </div>
-                <button type="submit" className="btn btn-success w-100 mb-4 custom-radius" style={{ height: '40px' }}>
+                <button type="submit" className="btn mb-4 text-white" style={{ width: '390px',height: '60px', background:'#02C543', borderRadius:'33px', fontSize:'15px', fontWeight:'500'}}>
                     Sign Up
                 </button>
             </form>
@@ -133,6 +141,17 @@ const Signup = () => {
                     <span className="mx-2">or</span>
                     <hr className="flex-fill" style={{ border: '1px solid white', margin: '0' }} />
                 </div>
+            </div>
+            <div className='container d-flex justify-content-center align-items-center mt-1'>
+                <button className='btn btn-custom-signup mb-4 mx-4'>
+                    <img src={fblogo} alt="" style={{ height: '30px', width: '30px', alignItems: 'center' }} />
+                </button>
+                <button className='btn btn-custom-signup mb-4 mx-4'>
+                    <img src={gglogo} alt="" style={{ height: '30px', width: '30px', alignItems: 'center'}} />
+                </button>
+                <button className='btn btn-custom-signup mb-4 mx-4'>
+                    <img src={aplogo} alt="" style={{ height: '30px', width: '30px', alignItems: 'center' }} />
+                </button>
             </div>
             <div className="text-center">
                 <p className="text-white">

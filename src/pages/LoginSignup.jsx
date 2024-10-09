@@ -30,29 +30,29 @@ const LoginSignup = () => {
     };
 
     return (
-        <div className="container d-flex flex-column justify-content-center align-items-center vh-100">
-            <img src={loginpic} alt="" className="img-fluid my-4 mx-auto d-block" />
+        <div className="container d-flex flex-column justify-content-center align-items-center vh-100 p-0 m-0">
+            <img src={loginpic} alt="" className="img-fluid my-4 mx-auto d-flex" style={{width:'348.74px', height:'302'}} />
             <p className="display-1 text-white my-4 font-weight-login">Let’s You In</p>
                 <div className="card-body">
                     <button
-                        className="btn btn-dark w-100 mb-4" style={{ height: '40px' }}
+                        className="btn mb-4 text-white" style={{ width: '390px',height: '60px', background: '#01040F', borderRadius:'12px', fontSize:'15px', fontWeight:'500' }}
                         onClick={handleFacebookLogin}
                     >
-                        <img src={fblogo} alt="" style={{ height: '20px', marginRight: '8px', alignItems: 'center' }} />
+                        <img src={fblogo} alt="" style={{ width: '30px',height: '30px', marginRight: '15px', alignItems: 'center' }} />
                         Continue with Facebook
                     </button>
                     <button
-                        className="btn btn-dark w-100 mb-4" style={{ height: '40px' }}
+                        className="btn mb-4 text-white" style={{ width: '390px',height: '60px', background: '#01040F', borderRadius:'12px', fontSize:'15px', fontWeight:'500' }}
                         onClick={handleGoogleLogin}
                     >
-                        <img src={gglogo} alt="" style={{ height: '20px', marginRight: '8px' }} />
+                        <img src={gglogo} alt="" style={{ width: '30px',height: '30px', marginRight: '15px' , alignItems: 'center' }} />
                         Continue with Google
                     </button>
                     <button
-                        className="btn btn-dark w-100 mb-4" style={{ height: '40px' }}
+                        className="btn mb-4 text-white" style={{ width: '390px',height: '60px', background: '#01040F', borderRadius:'12px', fontSize:'15px', fontWeight:'500' }}
                         onClick={handleAppleLogin}
                     >
-                        <img src={aplogo} alt="" style={{ height: '20px', marginRight: '8px' }} />
+                        <img src={aplogo} alt="" style={{ width: '30px',height: '30px', marginRight: '15px' , alignItems: 'center' }} />
                         Continue with Apple
                     </button>
                     <div className="d-flex align-items-center text-center mb-3 text-white">
@@ -60,7 +60,7 @@ const LoginSignup = () => {
                         <span className='mx-2'>or</span>
                         <hr className='flex-fill' style={{ borderColor: 'white'}}/>
                     </div>
-                    <button className="btn btn-success w-100 mb-4 custom-radius" style={{ height: '40px' }} onClick={handleLogin}>
+                    <button className="btn mb-4 text-white" style={{ width: '390px',height: '60px', background:'#02C543', borderRadius:'33px', fontSize:'15px', fontWeight:'500' }} onClick={handleLogin}>
                         Sign in with Contact Number
                     </button>
                     <div className="text-center">

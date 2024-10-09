@@ -1,8 +1,27 @@
+html, body {
+  background: #191A1F;
+  margin: 0; 
+  padding: 0; 
+  width: 100%; /* Ensure full width */
+  height: 100%;
+  box-sizing: border-box; /* Ensure full height */
+}
+*, *::before, *::after {
+  box-sizing: inherit; /* Inherit box-sizing from html */
+}
+
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  max-width: 1280px; /* Limit maximum width */
+  margin: 0 auto; /* Center the container */
+  padding: 2rem; /* Add padding for spacing */
+  min-height: 100vh; /* Fill at least the height of the viewport */
+  background-color: inherit; /* Inherit background color from body */
+}
+
+.child-element {
+  max-width: 100%; /* Ensures the child doesn't go beyond its parent container */
+  overflow-x: hidden;
 }
 
 .logo {
@@ -32,6 +51,36 @@
     animation: logo-spin infinite 20s linear;
   }
 }
+@media (max-width: 768px) { /* Targets iPad portrait mode */
+  #root {
+    padding: 1rem; /* Adjust padding for smaller screens */
+  }
+}
+
+/* Additional media query for larger devices like iPad landscape mode */
+@media (min-width: 769px) and (max-width: 1024px) { /* Targets iPad landscape mode */
+  #root {
+    padding: 2rem; /* Adjust padding if necessary */
+  }
+}
+
+/* Specific adjustments for iPads */
+@media (max-width: 1024px) { /* Targets all iPads */
+  html, body {
+    background-color: yourBackgroundColor; /* Consistent background color */
+  }
+
+  #root {
+    padding: 2rem; /* Maintain padding */
+    min-height: 100vh; /* Ensure it fills the viewport */
+  }
+}
+
+/* Ensure containers and elements do not overflow */
+.container {
+  padding: 0; /* Reset container padding if necessary */
+  margin: 0; /* Reset container margin if necessary */
+}
 
 .card {
   padding: 2em;
@@ -49,7 +98,8 @@
 .custom-input {
   background-color: black; 
   color: white; 
-  border: 1px solid white; 
+  border: 1px solid white;
+  width: 100%;
 }
 
 .custom-input::placeholder {
@@ -73,4 +123,12 @@
   border: none;
   height: 2px; 
   background-color: white; 
+}
+
+.btn-custom-signup{
+  background: #01040F;
+  width: 83px;
+  height: 65px;
+  border-radius: 12px;
+
 }
