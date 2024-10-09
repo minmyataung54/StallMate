@@ -132,3 +132,8 @@ html, body {
   border-radius: 12px;
 
 }
+
+.mx-4-nav-cus {
+  margin-left: 2rem; 
+  margin-right: 2rem; 
+}
