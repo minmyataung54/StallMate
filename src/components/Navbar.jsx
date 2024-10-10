@@ -11,7 +11,7 @@ import walletImg from '../assets/wallet-svgrepo-com.svg';
 const Navbar = ({ activeIcon, onIconClick }) => {
   
   return (
-    <nav className='navbar fixed-bottom text-white' style={{width:'100%',height:'80px',background:'rgba(0, 0, 0, 0.5)', borderRadius:'16px', backdropFilter:'blur(60%)'}}>
+    <nav className='navbar position-fixed bottom-0 start-0 text-white' style={{width:'100%',height:'80px',background:'rgba(0, 0, 0, 0.5)', borderRadius:'16px', backdropFilter:'blur(60%)'}}>
       <div className='container-fluid d-flex justify-content-center align-items-center'>
         <ul className="navbar-nav d-flex flex-row align-items-center">
           <li className='nav-item mx-4-nav-cus'>

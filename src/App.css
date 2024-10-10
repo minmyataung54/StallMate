@@ -17,6 +17,7 @@ html, body {
   padding: 2rem; /* Add padding for spacing */
   min-height: 100vh; /* Fill at least the height of the viewport */
   background-color: inherit; /* Inherit background color from body */
+  font-size: 16px;
 }
 
 .child-element {
@@ -136,4 +137,8 @@ html, body {
 .mx-4-nav-cus {
   margin-left: 2rem; 
   margin-right: 2rem; 
+}
+.custom-placeholder::placeholder {
+  color: #858585; /* Change the placeholder color to white */
+  opacity: 1; /* Optional: Set opacity to 1 for better visibility */
 }
