@@ -15,6 +15,10 @@ const Signup = () => {
     const [rememberMe, setRememberMe] = useState(false);
     const [countryCode, setCountryCode] = useState('+1');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const navigate = useNavigate();
+    const handleLogin = () => {
+        navigate('/home');
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent the default form submission
@@ -143,13 +147,13 @@ const Signup = () => {
                 </div>
             </div>
             <div className='container d-flex justify-content-center align-items-center mt-1'>
-                <button className='btn btn-custom-signup mb-4 mx-4'>
+                <button className='btn btn-custom-signup mb-4 mx-4' onClick={handleLogin}>
                     <img src={fblogo} alt="" style={{ height: '30px', width: '30px', alignItems: 'center' }} />
                 </button>
-                <button className='btn btn-custom-signup mb-4 mx-4'>
+                <button className='btn btn-custom-signup mb-4 mx-4' onClick={handleLogin}>
                     <img src={gglogo} alt="" style={{ height: '30px', width: '30px', alignItems: 'center'}} />
                 </button>
-                <button className='btn btn-custom-signup mb-4 mx-4'>
+                <button className='btn btn-custom-signup mb-4 mx-4' onClick={handleLogin}>
                     <img src={aplogo} alt="" style={{ height: '30px', width: '30px', alignItems: 'center' }} />
                 </button>
             </div>
