@@ -33,7 +33,7 @@ const LoginSignup = () => {
         <div className="container d-flex flex-column justify-content-center align-items-center vh-100 p-0 m-0">
             <img src={loginpic} alt="" className="img-fluid my-4 mx-auto d-flex" style={{width:'348.74px', height:'302'}} />
             <p className="display-1 text-white my-4 font-weight-login">Let’s You In</p>
-                <div className="card-body">
+                <div className="card-body d-flex flex-column">
                     <button
                         className="btn mb-4 text-white" style={{ width: '390px',height: '60px', background: '#01040F', borderRadius:'12px', fontSize:'15px', fontWeight:'500' }}
                         onClick={handleFacebookLogin}
