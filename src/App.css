@@ -2,27 +2,22 @@ html, body {
   background: #191A1F;
   margin: 0; 
   padding: 0; 
-  width: 100%; /* Ensure full width */
+  width: 100%; 
   height: 100%;
-  box-sizing: border-box; /* Ensure full height */
+  box-sizing: border-box; 
 }
 *, *::before, *::after {
-  box-sizing: inherit; /* Inherit box-sizing from html */
+  box-sizing: inherit; 
 }
 
 
 #root {
-  max-width: 1280px; /* Limit maximum width */
-  margin: 0 auto; /* Center the container */
-  padding: 2rem; /* Add padding for spacing */
-  min-height: 100vh; /* Fill at least the height of the viewport */
-  background-color: inherit; /* Inherit background color from body */
+  max-width: 100vw; 
+  margin: 0 auto;
+  padding: 2vw; 
+  min-height: 100vh; 
+  background-color: inherit; 
   font-size: 16px;
-}
-
-.child-element {
-  max-width: 100%; /* Ensures the child doesn't go beyond its parent container */
-  overflow-x: hidden;
 }
 
 .logo {
@@ -52,39 +47,39 @@ html, body {
     animation: logo-spin infinite 20s linear;
   }
 }
-@media (max-width: 768px) { /* Targets iPad portrait mode */
+@media (max-width: 768px) { 
   #root {
-    padding: 1rem; /* Adjust padding for smaller screens */
+    padding: 1rem; 
   }
 }
 
-/* Additional media query for larger devices like iPad landscape mode */
-@media (min-width: 769px) and (max-width: 1024px) { /* Targets iPad landscape mode */
+
+@media (min-width: 769px) and (max-width: 1024px) { 
   #root {
-    padding: 2rem; /* Adjust padding if necessary */
+    padding: 2rem; 
   }
 }
 
-/* Specific adjustments for iPads */
-@media (max-width: 1024px) { /* Targets all iPads */
+
+@media (max-width: 1024px) { 
   html, body {
-    background-color: yourBackgroundColor; /* Consistent background color */
+    background-color: yourBackgroundColor; 
   }
 
   #root {
-    padding: 2rem; /* Maintain padding */
-    min-height: 100vh; /* Ensure it fills the viewport */
+    padding: 2rem;
+    min-height: 100vh; 
   }
 }
 
-/* Ensure containers and elements do not overflow */
+
 .container {
-  padding: 0; /* Reset container padding if necessary */
-  margin: 0; /* Reset container margin if necessary */
+  padding: 0; 
+  margin: 0; 
 }
 
 .card {
-  padding: 2em;
+  padding: 2vw;
 }
 
 .read-the-docs {
@@ -104,7 +99,7 @@ html, body {
 }
 
 .custom-input::placeholder {
-  color: rgba(255, 255, 255, 0.6); 
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .custom-checkbox {
@@ -139,6 +134,6 @@ html, body {
   margin-right: 2rem; 
 }
 .custom-placeholder::placeholder {
-  color: #858585; /* Change the placeholder color to white */
-  opacity: 1; /* Optional: Set opacity to 1 for better visibility */
+  color: #858585;
+  opacity: 1; 
 }
