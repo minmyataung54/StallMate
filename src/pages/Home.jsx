@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import pfImg from '../assets/profile.png';
 import ntImg from '../assets/bell.png';
@@ -25,11 +26,11 @@ const Home = () => {
   return (
     <div className='container-fluid'>
       
-      <div className='container-fluid fixed-top d-flex justify-content-center align-items-center text-white' 
-           style={{ width: '100vw', height: '18.6vw', background: '#191A1F', zIndex: 1000 }} 
+      <div className='container-fluid fixed-top d-flex flex-column justify-content-center align-items-center text-white mt-5' 
+           style={{ width: '100vw', height: '18.6vw', background: '#191A1F'}} 
       >
-        <div className='container d-flex justify-content-center align-items-center'>
-          <div className="profile-container d-flex flex-row justify-content-around align-items-center">
+        <div className='container-fluid d-flex justify-content-center align-items-center'>
+          <div className="container-fluid d-flex flex-row justify-content-around align-items-center">
             <img src={pfImg} alt="" 
                  style={{ width: '11.6vw', height: '11.6vw', objectFit: 'cover', marginLeft: '1.5vw' }} 
             />
@@ -42,11 +43,7 @@ const Home = () => {
             />
           </div>
         </div>
-      </div>
-
-      <div style={{ height: '10vw' }}></div> 
-
-      <div className="container mt-4" style={{ width: '85vw', marginLeft: 'auto', marginRight: 'auto' }}>
+        <div className="container-fluid mt-4" style={{ width: '85vw', marginLeft: 'auto', marginRight: 'auto' }}>
         <form onSubmit={handleSubmit} className='w-100 d-flex justify-content-between'>
             <div className="input-group mb-3 w-100">
             <span className="input-group-text" style={{ background: '#0E162C', border: 'none' }}>
@@ -65,14 +62,17 @@ const Home = () => {
             </div>
         </form>
       </div>
+      </div>
 
-      <div className="container d-flex justify-content-between mt-3">
+      <div style={{ height: '25vw' }}></div> 
+
+      <div className="container-fluid d-flex justify-content-between mt-3">
           <p className='text-white'>Special offers</p>
           <a className='text-success' href="">See more...</a>
       </div>
 
 
-      <div className="container d-flex justify-content-center align-items-center my-3">
+      <div className="container-fluid d-flex justify-content-center align-items-center my-3">
           <button 
               style={{
                   width: '90.7vw',         
@@ -97,26 +97,28 @@ const Home = () => {
 
     
       <div className="row d-flex justify-content-center">
-          {[
-            { img: nearMe, label: 'Near Me' },
-            { img: burg, label: 'Burger' },
-            { img: pizz, label: 'Pizza' },
-            { img: nood, label: 'Noodle' },
-            { img: chic, label: 'Chicken' },
-            { img: vege, label: 'Vegetable' },
-            { img: cake, label: 'Cake' },
-            { img: others, label: 'Others' }
-          ].map((item, index) => (
-            <div key={index} className="col-3 d-flex flex-column align-items-center mb-n1">
-                <button style={{ background: 'transparent', border: 'none', textAlign: 'center' }}>
-                    <img src={item.img} alt={item.label} style={{ width: '9.3vw', height: 'auto' }} />
-                    <p style={{ fontWeight: '100', fontSize: '3vw', marginTop: '1vw' }}>{item.label}</p>
-                </button>
-            </div>
-          ))}
+        {[
+          { img: nearMe, label: 'Near Me', link: '/nearme' },
+          { img: burg, label: 'Burger', link: '/burger' },
+          { img: pizz, label: 'Pizza', link: '/pizza' },
+          { img: nood, label: 'Noodle', link: '/noodle' },
+          { img: chic, label: 'Chicken', link: '/chicken' },
+          { img: vege, label: 'Vegetable', link: '/vegetable' },
+          { img: cake, label: 'Cake', link: '/cake' },
+          { img: others, label: 'Others', link: '/others' }
+        ].map((item, index) => (
+          <div key={index} className="col-3 d-flex flex-column align-items-center mb-n1">
+            <Link to={item.link} style={{ textDecoration: 'none' }}>
+              <button style={{ background: 'transparent', border: 'none', textAlign: 'center' }}>
+                <img src={item.img} alt={item.label} style={{ width: '9.3vw', height: 'auto' }} />
+                <p className='text-white' style={{ fontWeight: '100', fontSize: '3vw', marginTop: '1vw' }}>{item.label}</p>
+              </button>
+            </Link>
+          </div>
+        ))}
       </div>
 
-      <div className="container d-flex justify-content-between mt-3">
+      <div className="container-fluid d-flex justify-content-between mt-3">
           <p className='text-white'>Weekly Special</p>
           <a className='text-success' href="">See all</a>
       </div>

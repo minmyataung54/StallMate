@@ -8,11 +8,13 @@ import Profile from './pages/Profile';
 import Setting from './pages/Setting';
 import Wallet from './pages/Wallet';
 import Navbar from './components/Navbar';
+import NearMe from './pages/NearMe';
+import ResNMenu from './pages/ResNMenu';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
-  const isLoggedIn = true; // Change this according to your auth logic
+  const isLoggedIn = true; 
 
   return (
     <Router>
@@ -20,7 +22,7 @@ function App() {
         <Route path="/" element={<LoginSignup />} />
         <Route path="/login" element={<LoginSignup />} />
         <Route path="/signup" element={<Signup />} />
-
+        
         <Route 
           path="/home" 
           element={isLoggedIn ? <HomeWithNavbar component={<Home />} /> : <Navigate to="/login" />} 
@@ -40,6 +42,14 @@ function App() {
         <Route 
           path="/wallet" 
           element={isLoggedIn ? <HomeWithNavbar component={<Wallet />} /> : <Navigate to="/login" />} 
+        />
+        <Route 
+          path="/nearme" 
+          element={isLoggedIn ? <NearMe /> : <Navigate to='/login' />} 
+        />
+        <Route 
+          path="/resnmenu/:restaurantName" 
+          element={isLoggedIn ? <ResNMenu /> : <Navigate to='/login' />} 
         />
       </Routes>
     </Router>
