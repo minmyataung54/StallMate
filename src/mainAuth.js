@@ -2,8 +2,10 @@ const express = require('express');
 const passportConfig = require('./config/passportConfig');
 const authRouter = require('./routes/authRouter');
 const homeRouter = require('./routes/homeRouter');
+const menuRouter = require('./routes/menuRouter');
 const connectDB = require('./config/db');
 // const User = require('./models/userSchema'); 
+const isLoggedIn = require('./middleware/authMiddleWare');
 require('dotenv').config();
 require('./config/GoogleAuth');
 
@@ -32,6 +34,8 @@ connectDB();
 passportConfig(app);
 app.use('/',homeRouter);
 app.use('/auth',authRouter);
+app.use('/protected', isLoggedIn, menuRouter);
+
 
 const PORT = 3000;
 app.listen(PORT, () => {
