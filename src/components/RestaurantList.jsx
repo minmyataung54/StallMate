@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ResCard from "./ResCard"; // Import your ResCard component
+import ResCard from "./ResCard";
 
 const RestaurantList = () => {
   const [restaurants, setRestaurants] = useState([]);

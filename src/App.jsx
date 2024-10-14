@@ -10,6 +10,7 @@ import Wallet from './pages/Wallet';
 import Navbar from './components/Navbar';
 import NearMe from './pages/NearMe';
 import ResNMenu from './pages/ResNMenu';
+import CartItem from './components/CartItem';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -50,6 +51,10 @@ function App() {
         <Route 
           path="/resnmenu/:restaurantName" 
           element={isLoggedIn ? <ResNMenu /> : <Navigate to='/login' />} 
+        />
+        <Route 
+          path="/cartitem" 
+          element={isLoggedIn ? <CartItem /> : <Navigate to='/login' />} 
         />
       </Routes>
     </Router>
