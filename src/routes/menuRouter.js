@@ -61,9 +61,8 @@ router.put('/:seller_id/menu', isLoggedIn, upload.single('image'), async (req, r
     }
 
     
-    let translatedName = name; // Default to original name in case translation fails
-    let translatedDescription = description; // Default to original description
-
+    let translatedName = name; 
+    let translatedDescription = description; 
     try {
       translatedName = await translate(name);
       translatedDescription = await translate(description);
@@ -124,7 +123,7 @@ router.post('/:seller_id/menu/edit-item/:item_id', isLoggedIn, upload.single('im
   const { name, description, price } = req.body;
 
   try {
-    // Find the menu containing the menu item by item_id
+    
     const menu = await Menu.findOne({ 'items._id': req.params.item_id });
 
     if (!menu) {
