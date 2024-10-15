@@ -41,7 +41,7 @@ const translate = async (text) => {
 };
 
 
-router.post('/:id/menu', isLoggedIn, upload.single('image'), async (req, res) => {
+router.put('/:seller_id/menu', isLoggedIn, upload.single('image'), async (req, res) => {
   const { name, description, price } = req.body;
 
   
@@ -52,10 +52,10 @@ router.post('/:id/menu', isLoggedIn, upload.single('image'), async (req, res) =>
 
   try {
     
-    let menu = await Menu.findOne({ seller: req.params.id });
+    let menu = await Menu.findOne({ seller: req.params.seller_id });
     if (!menu) {
       menu = new Menu({
-        seller: req.params.id,
+        seller: req.params.seller_id,
         items: []
       });
     }
@@ -94,15 +94,16 @@ router.post('/:id/menu', isLoggedIn, upload.single('image'), async (req, res) =>
 });
 
 
-router.get('/:id/menu', isLoggedIn, async (req, res) => {
+router.get('/:seller_id/menu', isLoggedIn, async (req, res) => {
   try {
-    const menu = await Menu.findOne({ seller: req.params.id });
+    const menu = await Menu.findOne({ seller: req.params.seller_id });
 
     if (!menu || menu.items.length === 0) {
       return res.status(404).json({ error: 'No menu items found for this seller' });
     }
 
     const filteredMenuItems = menu.items.map(item => ({
+      _id: item._id,
       name: item.name,
       name_en: item.name_en, 
       description_en: item.description_en,
@@ -119,10 +120,11 @@ router.get('/:id/menu', isLoggedIn, async (req, res) => {
 });
 
 
-router.post('/edit-item/:item_id', isLoggedIn, upload.single('image'), async (req, res) => {
+router.post('/:seller_id/menu/edit-item/:item_id', isLoggedIn, upload.single('image'), async (req, res) => {
   const { name, description, price } = req.body;
 
   try {
+    // Find the menu containing the menu item by item_id
     const menu = await Menu.findOne({ 'items._id': req.params.item_id });
 
     if (!menu) {
@@ -131,20 +133,80 @@ router.post('/edit-item/:item_id', isLoggedIn, upload.single('image'), async (re
 
     const menuItem = menu.items.id(req.params.item_id);
 
+    
     menuItem.name = name || menuItem.name;
     menuItem.description = description || menuItem.description;
     menuItem.price = price || menuItem.price;
 
+    
     if (req.file) {
       const imageUrl = req.file.location;
       menuItem.imageUrl = imageUrl;
     }
 
+    
+    try {
+      const translatedName = await translate(name);
+      const translatedDescription = await translate(description);
+      menuItem.name_en = translatedName || menuItem.name_en;
+      menuItem.description_en = translatedDescription || menuItem.description_en;
+    } catch (translationError) {
+      console.error('Translation failed, using original text:', translationError.message);
+    }
+
+    // Save the updated menu
     const updatedMenu = await menu.save();
+
     res.json({ message: 'Menu item updated successfully!', menu: updatedMenu });
   } catch (err) {
     console.error('Error updating menu item:', err);
     res.status(500).json({ error: 'Error updating menu item' });
+  }
+});
+
+// router.delete('/:id/menu/:id', async (req, res) => {
+//   const { id } = req.params;
+//   console.log(id);
+
+//   try {
+//     const deletedMenuItem = await Menu.findByIdAndDelete(id);
+
+//     if (!deletedMenuItem) {
+//       return res.status(404).json({ message: 'Menu item not found' });
+//     }
+
+//     res.json({
+//       message: 'Menu item deleted successfully!',
+//       menuItem: deletedMenuItem
+//     });
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({ error: 'Failed to delete menu item' });
+//   }
+// });
+
+router.delete('/:seller_id/menu/:item_id', async (req, res) => {
+  const { seller_id, item_id } = req.params;
+
+  try {
+    
+    const updatedMenu = await Menu.findOneAndUpdate(
+      { seller: seller_id },
+      { $pull: { items: { _id: item_id } } }, 
+      { new: true } 
+    );
+
+    if (!updatedMenu) {
+      return res.status(404).json({ message: 'Menu item not found' });
+    }
+
+    res.json({
+      message: 'Menu item deleted successfully!',
+      menu: updatedMenu
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: 'Failed to delete menu item' });
   }
 });
 
