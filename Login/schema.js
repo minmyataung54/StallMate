@@ -1,3 +1,4 @@
+// For customer login
 {
     "_id": ObjectId(),  // Automatically generated unique identifier;
     "username": String,  // The user's display name or chosen username
@@ -5,4 +6,3 @@
     "email": String,  // User's email address associated with Google account
     "created_at": Date  // Timestamp of account creation
   }
-  

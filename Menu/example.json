@@ -5,15 +5,15 @@
       "address": "123 Main St",
       "city": "Townsville",
       "state": "TX",
-      "postal_code": "78945"
     },
     "menu": [
       {
-        "food_name": "Cheeseburger",
+        "food_name_th": "Cheeseburger",
+        "food_name_en": "ชีสเบอร์เกอร์", // Name of the food item
+        "description_th": "A meat between bread", // Description of the food
+        "description_en": "เนื้อระหว่างขนมปัง",
         "price": 8.99,
         "category": "Main Course",
-        "ingredients": ["Beef Patty", "Cheese", "Lettuce", "Tomato", "Onion", "Pickles"],
-        "removable_ingredients": ["Tomato", "Onion", "Pickles"], // Ingredients that can be removed
         "add_ons": [
           {
             "name": "Extra Cheese",
