@@ -4,7 +4,7 @@ const multerS3 = require('multer-s3');
 const s3Client = require('../config/s3menuconfig');
 const Menu = require('../models/menuSchema');
 const isLoggedIn = require('../middleware/authMiddleWare');
-const axios = require('axios');
+const translate = require('../middleware/azure_translate');
 
 const router = express.Router();
 
@@ -24,22 +24,36 @@ const upload = multer({
   }),
 });
 
+// let key = process.env.key;
+// let endpoint = process.env.endpoint;
+// let location = process.env.location;
 
-const translate = async (text) => {
-  try {
-    const response = await axios.post('http://localhost:8000/translate', {
-      q: text,
-      source: 'th',
-      target: 'en',
-      format: 'text'
-    });
-    return response.data.translatedText;
-  } catch (error) {
-    console.error('Translation error:', error.response ? error.response.data : error.message);
-    throw new Error('Failed to translate the text');
-  }
-};
-
+// const translate = async(text) => {
+//   try {
+//     const response = await axios.post(
+//       `${endpoint}/transalte`,
+//       [{'text' : text}],
+//       {
+//         headers : {
+//             'Ocp-Apim-Subscription-Key': key,
+//             'Ocp-Apim-Subscription-Region': location,
+//             'Content-type': 'application/json',
+//             'X-ClientTraceId': uuidv4().toString()
+//         },
+//         params : {
+//           'api-version' : '3.0',
+//           'from' : 'th',
+//           'to' : 'en'
+//         }
+//       }
+//   );
+//   return response.data[0].translations[0].text;
+//   }
+//   catch(error){
+//     console.error('Translation error:', error.response ? error.response.data : error.message);
+//     throw new Error('Failed to translate the text');
+//   }
+// }
 
 router.put('/:seller_id/menu', isLoggedIn, upload.single('image'), async (req, res) => {
   const { name, description, price } = req.body;
@@ -60,7 +74,6 @@ router.put('/:seller_id/menu', isLoggedIn, upload.single('image'), async (req, r
       });
     }
 
-    
     let translatedName = name; 
     let translatedDescription = description; 
     try {
