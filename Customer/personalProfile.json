@@ -1,0 +1,18 @@
+{
+  "customerId": "ObjectId",
+  "personalPhoto": "string",
+  "personalInfo": {
+    "firstName": "string",
+    "lastName": "string",
+    "dateOfBirth": "date",
+    "gender": "string",
+    "contactInfo": {
+      "phoneNumber": "string",
+      "address": "string"
+    }
+  },
+  "metadata": {
+    "createdAt": "date",
+    "updatedAt": "date"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "_id": { "$oid": "ObjectId" },
+  "restaurant_name": "string",
+  "qrcode_url": "string",
+  "menu": [
+    {
+      "food_name_th": "string",
+      "food_name_en": "string",
+      "description_th": "string",
+      "description_en": "string",
+      "price": "number",
+      "category": "string",
+      "imageURL": "string",
+      "is_vegetarian": "boolean",
+      "is_gluten_free": "boolean",
+      "spiciness_level": {
+        "type": "string",
+        "value": "number"
+      }
+    }
+  ]
+}

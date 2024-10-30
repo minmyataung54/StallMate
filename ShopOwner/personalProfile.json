@@ -1,0 +1,35 @@
+{
+  "owner_profile": {
+    "full_name": "string",
+    "profile_photo": "string",
+    "bio": "string",
+    "experience_years": "number"
+  },
+  "personal_information": {
+    "date_of_birth": { "$date": "ISODate" },
+    "gender": "string",
+    "nationality": "string",
+    "languages_spoken": ["string"]
+  },
+  "restaurant_id": { "$oid": "ObjectId" },
+  "restaurant_name": "string",
+  "restaurant_photo": "string",
+  "location": {
+    "address": "string",
+    "city": "string",
+    "state": "string"
+  },
+  "opening_hours": {
+    "weekday": "string",
+    "open_time": "string",
+    "close_time": "string"
+  },
+  "contact": {
+    "phone_number": "string",
+    "email": "string"
+  },
+  "rating": {
+    "average": "number",
+    "number_of_reviews": "number"
+  }
+}

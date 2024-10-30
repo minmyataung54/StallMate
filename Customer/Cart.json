@@ -1,0 +1,16 @@
+{
+  "_id": "ObjectId",
+  "customerId": "ObjectId",
+  "restaurantId": "ObjectId",
+  "menuId": "ObjectId",
+  "cartItems": [
+    {
+      "foodName": "string",
+      "imageURL": "string",
+      "price": "number",
+      "quantity": "number",
+      "totalItemPrice": "number",
+      "notes": "string"
+    }
+  ]
+}

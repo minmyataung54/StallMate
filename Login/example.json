@@ -1,8 +1,0 @@
-{
-    "_id": ObjectId("614c1b1f4a3f5c7e529c4567"),
-    "username": "JohnDoe",
-    "google_id": "109876543210987654321",
-    "email": "johndoe@gmail.com",
-    "created_at": ISODate("2023-09-30T10:00:00Z")
-  }
-  

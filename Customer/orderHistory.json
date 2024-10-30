@@ -1,0 +1,24 @@
+{
+  "_id": "ObjectId()",
+  "customerId": "ObjectId()",
+  "order_date": "Date",
+  "order_status": "String",
+  "payment_status": "String",
+  "total_amount": "Number",
+  "payment_method": "String",
+  "order_items": [
+    {
+      "item_id": "ObjectId()",
+      "food_name": "String",
+      "quantity": "Number",
+      "price_per_unit": "Number",
+      "total_price": "Number",
+      "customizations": "String"
+    }
+  ],
+  "notes": "String",
+  "timestamps": {
+    "created_at": "Date",
+    "updated_at": "Date"
+  }
+}
