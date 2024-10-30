@@ -3,6 +3,7 @@ const passportConfig = require('./config/passportConfig');
 const authRouter = require('./routes/authRouter');
 const homeRouter = require('./routes/homeRouter');
 const menuRouter = require('./routes/menuRouter');
+const dashboardRouter = require('./routes/dashboardRouter');
 const connectDB = require('./config/db');
 // const User = require('./models/userSchema'); 
 const isLoggedIn = require('./middleware/authMiddleWare');
@@ -34,7 +35,8 @@ connectDB();
 passportConfig(app);
 app.use('/',homeRouter);
 app.use('/auth',authRouter);
-app.use('/protected', isLoggedIn, menuRouter);
+// app.use('/dashboard',dashboardRouter);
+app.use('/dashboard/stallowner', isLoggedIn, menuRouter);
 
 
 const PORT = 3000;

@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
-const s3Client = require('../config/s3menuconfig');
+const s3Client = require('../config/s3Client');
 const Menu = require('../models/menuSchema');
 const isLoggedIn = require('../middleware/authMiddleWare');
 const translate = require('../middleware/azure_translate');
@@ -132,7 +132,7 @@ router.get('/:seller_id/menu', isLoggedIn, async (req, res) => {
 });
 
 
-router.post('/:seller_id/menu/edit-item/:item_id', isLoggedIn, upload.single('image'), async (req, res) => {
+router.post('/:seller_id/menu/:item_id', isLoggedIn, upload.single('image'), async (req, res) => {
   const { name, description, price } = req.body;
 
   try {

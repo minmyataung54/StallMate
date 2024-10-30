@@ -25,12 +25,12 @@ services:
     volumes:
       - mongo-data:/data/db
 
-  libretranslate:
-    image: libretranslate/libretranslate
-    container_name: libretranslate-service
-    ports:
-      - "8000:5000"  
-    command: --load-only en,th
+  # libretranslate:
+  #   image: libretranslate/libretranslate
+  #   container_name: libretranslate-service
+  #   ports:
+  #     - "8000:5000"  
+  #   command: --load-only en,th
 
 volumes:
   mongo-data:  

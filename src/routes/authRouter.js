@@ -2,18 +2,35 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
-router.get('/google',passport.authenticate('google', { scope: ['email', 'profile']}));
 
-router.get('/google/callback', passport.authenticate('google',{
-    failureRedirect: '/google/failure'
-}), (req,res) => {
-    res.redirect(`/protected/${req.user._id}`);
+router.get('/stallowner/google', passport.authenticate('google-stallowner', { scope: ['email', 'profile'] }));
+
+router.get('/customer/google', passport.authenticate('google-customer', { scope: ['email', 'profile'] }));
+
+router.get('/stallowner/google/callback', 
+    passport.authenticate('google-stallowner', {
+        failureRedirect: '/auth/failure?user=stallowner'
+    }), (req, res) => {
+    res.redirect(`/dashboard/stallowner/${req.user._id}`);
 });
 
-router.get('/google/failure', (req,res) => {
-    res.send('Failure to authenticate.');
+router.get('/customer/google/callback', 
+    passport.authenticate('google-customer', {
+        failureRedirect: '/auth/failure?user=customer'
+    }), (req, res) => {
+    res.redirect(`/dashboard/customer/${req.user._id}`);
 });
 
+router.get('/failure', (req, res) => {
+    const userType = req.query.user;
+    if (userType === "stallowner") {
+        res.redirect('/auth/stallowner/google');
+    } else if (userType === "customer") {
+        res.redirect('/auth/customer/google');
+    } else {
+        res.redirect('/');
+    }
+});
 
 router.get('/logout', (req, res, next) => {
     req.logout((err) => {
@@ -26,4 +43,5 @@ router.get('/logout', (req, res, next) => {
         });
     });
 });
+
 module.exports = router;

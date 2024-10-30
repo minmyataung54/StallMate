@@ -11,14 +11,25 @@ const isLoggedIn = require('../middleware/authMiddleWare.js');
 // }
 // module.exports = isLoggedIn;
 router.get('/', (req, res) => {
-    res.send('<a href="/auth/google">Authenticate with Google</a>');
+    res.send(`
+        <a href="/auth/stallowner/google">Authenticate as Stall Owner with Google </a> <br>
+        <a href="/auth/customer/google">Authenticate as Customer with Google </a>`);
 });
 
-router.get('/protected/:id', isLoggedIn, (req, res) => {
+router.get('/dashboard/stallowner/:seller_id', isLoggedIn, (req, res) => {
     if (req.user) {
-        res.send(`Hello, ${req.user.username}, Welcome from StallMate !     <a href="/protected/${req.params.id}/menu"> Go to menu`);
+        res.send(`Hello stall owner ${req.user.username}, welcome to StallMate! <a href="/dashboard/stallowner/${req.params.seller_id}/menu">Go to menu</a>`);
     } else {
-        res.redirect('/auth/google'); 
+        res.redirect('/auth/stallowner/google');
+    }
+});
+
+
+router.get('/dashboard/customer/:customer_id', isLoggedIn, (req, res) => {
+    if (req.user) {
+        res.send(`Hello customer ${req.user.username}, welcome to StallMate!`);
+    } else {
+        res.redirect('/auth/customer/google');
     }
 });
 

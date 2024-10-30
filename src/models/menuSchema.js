@@ -13,6 +13,7 @@ const menuItemSchema = new mongoose.Schema({
 const menuSchema = new mongoose.Schema({
     seller: { type : mongoose.Schema.Types.ObjectId, ref: 'User'},
     items: [menuItemSchema],
+    qrcode_url : { type : String , required: true},
 }, {collection: 'Menu'})
 
 const Menu = mongoose.model('Menu',menuSchema);
