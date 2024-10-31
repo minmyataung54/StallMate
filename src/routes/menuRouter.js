@@ -111,7 +111,7 @@ router.get('/:seller_id/menu', isLoggedIn, async (req, res) => {
     const menu = await Menu.findOne({ seller: req.params.seller_id });
 
     if (!menu || menu.items.length === 0) {
-      return res.status(404).json({ error: 'No menu items found for this seller' });
+      return res.status(404).json({ Remark : 'No menu items for this seller yet' });
     }
 
     const filteredMenuItems = menu.items.map(item => ({
@@ -124,7 +124,10 @@ router.get('/:seller_id/menu', isLoggedIn, async (req, res) => {
       imageUrl: item.imageUrl,
     }));
 
-    res.json({ menuItems: filteredMenuItems });
+    res.json({ 
+      qrCodeUrl: menu.qrcode_url, // Assuming `qrcode_url` is the field name in the Menu schema
+      menuItems: filteredMenuItems 
+    });
   } catch (err) {
     console.error('Error fetching menu:', err);
     res.status(500).json({ error: 'Server error' });
