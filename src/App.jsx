@@ -16,7 +16,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const isLoggedIn = true; 
-
+  
   return (
     <Router>
       <Routes>
@@ -25,7 +25,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         
         <Route 
-          path="/home" 
+          path="/home/:username" 
           element={isLoggedIn ? <HomeWithNavbar component={<Home />} /> : <Navigate to="/login" />} 
         />
         <Route 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import pfImg from '../assets/profile.png';
 import ntImg from '../assets/bell.png';
@@ -16,12 +16,14 @@ import others from '../assets/kanom.png';
 import './Home.css'; 
 const Home = () => {
   const [query, setQuery] = useState('');
-  
+  const { username } = useParams();
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Search Query:', query);
     setQuery('');
+    console.log(typeof(username));
   };
+  
 
   return (
     <div className='container-fluid'>
@@ -36,7 +38,7 @@ const Home = () => {
             />
             <div className="d-flex flex-column justify-content-center">
               <p className="mx-2 my-2" style={{ fontSize: '2.3vw', fontWeight: '300' }}>Customer</p> 
-              <p className="h3 mx-2" style={{ fontWeight: '300', fontSize: '3.7vw' }}>John K Square</p> 
+              <p className="h3 mx-2" style={{ fontWeight: '300', fontSize: '3.5vw' }}>{username}</p>
             </div>
             <img src={ntImg} alt="" 
                  style={{ width: '7vw', height: '7vw', filter: 'invert(1)', marginLeft: '30vw' }} 
