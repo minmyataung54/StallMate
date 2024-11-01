@@ -4,11 +4,9 @@ const router = express.Router();
 
 function setRedirectTo(req, res, next) {
     if (req.query.redirectTo) {
-        // Store the complete redirect path
         req.session.redirectTo = req.query.redirectTo;
         console.log('Setting redirectTo in session:', req.session.redirectTo);
         
-        // Ensure the session is saved before continuing
         req.session.save((err) => {
             if (err) {
                 console.error('Error saving session:', err);
@@ -21,7 +19,7 @@ function setRedirectTo(req, res, next) {
         next();
     }
 }
-// Authentication routes
+
 router.get('/stallowner/google', passport.authenticate('google-stallowner', { scope: ['email', 'profile'] }));
 router.get('/customer/google', 
     setRedirectTo,
@@ -34,7 +32,6 @@ router.get('/customer/google',
     }
 );
 
-// Customer Google callback route with redirect handling
 router.get('/customer/google/callback', 
     passport.authenticate('google-customer', {
         failureRedirect: '/auth/failure?user=customer'
@@ -42,7 +39,7 @@ router.get('/customer/google/callback',
     (req, res) => {
         console.log('Callback Session:', req.session);
         
-        // Decode state parameter if present
+        
         let stateRedirect;
         if (req.query.state) {
             try {
