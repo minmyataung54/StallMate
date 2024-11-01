@@ -11,7 +11,7 @@ const { PutObjectCommand } = require('@aws-sdk/client-s3');
  */
 async function generateAndSaveQRCode(userID) {
     try {
-        const menuUrl = `https://38bf-2001-fb1-2e-c624-315a-3b55-911c-778d.ngrok-free.app/auth/customer/google?redirectTo=/dashboard/stallowner/${userID}/menu`;
+        const menuUrl = `https://65ca-2001-fb1-2e-c624-315a-3b55-911c-778d.ngrok-free.app/auth/customer/google?redirectTo=/dashboard/stallowner/${userID}/menu`;
         const qrCodeDataUrl = await QRCode.toDataURL(menuUrl);
         const base64Data = qrCodeDataUrl.replace(/^data:image\/png;base64,/, "");
         const buffer = Buffer.from(base64Data, 'base64');
@@ -28,11 +28,17 @@ async function generateAndSaveQRCode(userID) {
         await s3Client.send(command);
         const qrCodeUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Params.Key}`;
 
-        const menu = new Menu({
-            seller: userID,
-            items: [], 
-            qrcode_url: qrCodeUrl,
-        });
+        let menu = await Menu.findOne({ seller: userID });
+        
+        if (!menu) {
+            menu = new Menu({
+                seller: userID,
+                items: [],
+                qrcode_url: qrCodeUrl,
+            });
+        } else {
+            menu.qrcode_url = qrCodeUrl;
+        }
         
         await menu.save();  
         console.log('QR code generated and saved to S3 and Menu schema:', qrCodeUrl);
