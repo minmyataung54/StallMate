@@ -9,7 +9,7 @@ const { generateAndSaveQRCode } = require('./qrCodeUtil');
 passport.use('google-stallowner', new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "https://65ca-2001-fb1-2e-c624-315a-3b55-911c-778d.ngrok-free.app/auth/stallowner/google/callback",
+    callbackURL: "https://9716-124-120-3-97.ngrok-free.app/auth/stallowner/google/callback",
     passReqToCallback: true,
   },
   async (request, accessToken, refreshToken, profile, done) => {
@@ -39,7 +39,7 @@ passport.use('google-stallowner', new GoogleStrategy({
 passport.use('google-customer', new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "https://65ca-2001-fb1-2e-c624-315a-3b55-911c-778d.ngrok-free.app/auth/customer/google/callback",
+  callbackURL: "https://9716-124-120-3-97.ngrok-free.app/auth/customer/google/callback",
   passReqToCallback: true,
 },
 async (request, accessToken, refreshToken, profile, done) => {

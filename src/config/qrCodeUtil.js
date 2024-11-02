@@ -11,7 +11,7 @@ const { PutObjectCommand } = require('@aws-sdk/client-s3');
  */
 async function generateAndSaveQRCode(userID) {
     try {
-        const menuUrl = `https://65ca-2001-fb1-2e-c624-315a-3b55-911c-778d.ngrok-free.app/auth/customer/google?redirectTo=/dashboard/stallowner/${userID}/menu`;
+        const menuUrl = `https://9716-124-120-3-97.ngrok-free.app/auth/customer/google?redirectTo=/dashboard/stallowner/${userID}/menu`;
         const qrCodeDataUrl = await QRCode.toDataURL(menuUrl);
         const base64Data = qrCodeDataUrl.replace(/^data:image\/png;base64,/, "");
         const buffer = Buffer.from(base64Data, 'base64');
