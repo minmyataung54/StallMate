@@ -1,19 +1,42 @@
 const mongoose = require('mongoose');
-// const schema = mongoose.Schema; 
 const moment = require('moment-timezone');
 
 const userSchema = new mongoose.Schema({
-    username: {type: String, required: true},
-    googleID: {type: String, required: true, unique: true},
-    menu : {
-        type: mongoose.Schema.Types.ObjectId, ref : 'Menu'
+    username: { type: String, required: true },
+    googleID: { type: String, required: true, unique: true },
+    menu: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Menu'
     },
-    createdAt: { 
-        type: Date, 
-        default: () => moment().tz('Asia/Bangkok').toDate()
-    } 
-        
-}, {collection: 'StallOwner'});
+    profile : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Profile'
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,  
+        get: (date) => moment(date).tz('Asia/Bangkok').format() 
+    }
+}, {
+    collection: 'StallOwner',
+    timestamps: false,      
+    versionKey: false,     
+    toJSON: { 
+        getters: true,
+        transform: function(doc, ret) {
+            delete ret.id;  
+            return ret;
+        }
+    },
+    toObject: { 
+        getters: true,
+        transform: function(doc, ret) {
+            delete ret.id;  
+            return ret;
+        }
+    }
+});
 
-const User = mongoose.model('User',userSchema);
+const User = mongoose.model('User', userSchema);
 module.exports = User;
+
