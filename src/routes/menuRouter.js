@@ -2,203 +2,195 @@ const express = require('express');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const s3Client = require('../config/s3Client');
-const Menu = require('../models/menuSchema');
+const { Menu, CATEGORIES } = require('../models/menuSchema');
 const isLoggedIn = require('../middleware/authMiddleWare');
 const translate = require('../middleware/azure_translate');
 
 const router = express.Router();
 
-// Set up Multer for image upload to S3
+// S3 configuration
 const upload = multer({
-  storage: multerS3({
-    s3: s3Client,
-    bucket: process.env.AWS_BUCKET_NAME,
-    acl: 'public-read',
-    metadata: (req, file, cb) => {
-      cb(null, { fieldName: file.fieldname });
-    },
-    key: (req, file, cb) => {
-      const fileName = Date.now().toString() + '-' + file.originalname;
-      cb(null, fileName);
-    },
-  }),
+    storage: multerS3({
+        s3: s3Client,
+        bucket: process.env.AWS_BUCKET_NAME,
+        acl: 'public-read',
+        metadata: (req, file, cb) => {
+            cb(null, { fieldName: file.fieldname });
+        },
+        key: (req, file, cb) => {
+            const fileName = Date.now().toString() + '-' + file.originalname;
+            cb(null, fileName);
+        },
+    }),
 });
 
-// let key = process.env.key;
-// let endpoint = process.env.endpoint;
-// let location = process.env.location;
-
-// const translate = async(text) => {
-//   try {
-//     const response = await axios.post(
-//       `${endpoint}/transalte`,
-//       [{'text' : text}],
-//       {
-//         headers : {
-//             'Ocp-Apim-Subscription-Key': key,
-//             'Ocp-Apim-Subscription-Region': location,
-//             'Content-type': 'application/json',
-//             'X-ClientTraceId': uuidv4().toString()
-//         },
-//         params : {
-//           'api-version' : '3.0',
-//           'from' : 'th',
-//           'to' : 'en'
-//         }
-//       }
-//   );
-//   return response.data[0].translations[0].text;
-//   }
-//   catch(error){
-//     console.error('Translation error:', error.response ? error.response.data : error.message);
-//     throw new Error('Failed to translate the text');
-//   }
-// }
-
+// Create menu item
 router.put('/:seller_id/menu', isLoggedIn, upload.single('image'), async (req, res) => {
-  const { name, description, price } = req.body;
+    const { name, description, price, category } = req.body;
 
-  
-  if (!req.file) {
-    return res.status(400).json({ error: 'Image file is required' });
-  }
-  const imageUrl = req.file.location;
-
-  try {
-    
-    let menu = await Menu.findOne({ seller: req.params.seller_id });
-    if (!menu) {
-      menu = new Menu({
-        seller: req.params.seller_id,
-        items: []
-      });
+    if (!req.file) {
+        return res.status(400).json({ error: 'Image file is required' });
     }
+    const imageUrl = req.file.location;
 
-    let translatedName = name; 
-    let translatedDescription = description; 
     try {
-      translatedName = await translate(name);
-      translatedDescription = await translate(description);
-      console.log(`Translation successful: ${translatedName}, ${translatedDescription}`);
-    } catch (translationError) {
-      console.error('Translation failed, using original text:', translationError.message);
+        let menu = await Menu.findOne({ seller: req.params.seller_id });
+        if (!menu) {
+            menu = new Menu({
+                seller: req.params.seller_id,
+                items: []
+            });
+        }
+
+        let translatedName = name;
+        let translatedDescription = description;
+        try {
+            translatedName = await translate(name);
+            translatedDescription = await translate(description);
+            console.log(`Translation successful: ${translatedName}, ${translatedDescription}`);
+        } catch (translationError) {
+            console.error('Translation failed:', translationError.message);
+        }
+
+        const newMenuItem = {
+            name,
+            name_en: translatedName,
+            description,
+            description_en: translatedDescription,
+            price,
+            imageUrl,
+            category: category || 'Main dish'
+        };
+
+        menu.items.push(newMenuItem);
+        const updatedMenu = await menu.save();
+
+        res.json({ message: 'Menu item added successfully!', menu: updatedMenu });
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ error: 'Failed to add menu item' });
     }
-
-    
-    const newMenuItem = {
-      name: name,
-      description: description,
-      price: price,
-      imageUrl: imageUrl,
-      name_en: translatedName, 
-      description_en: translatedDescription, 
-    };
-
-    
-    menu.items.push(newMenuItem);
-    const updatedMenu = await menu.save();
-
-    res.json({ message: 'Menu item added successfully!', menu: updatedMenu });
-  } catch (error) {
-    console.error('Error saving or translating menu item:', error.message);
-    res.status(500).json({ error: 'Failed to add menu item' });
-  }
 });
-
 
 router.get('/:seller_id/menu', isLoggedIn, async (req, res) => {
   try {
-    const menu = await Menu.findOne({ seller: req.params.seller_id });
+      const menu = await Menu.findOne({ seller: req.params.seller_id });
 
-    if (!menu || menu.items.length === 0) {
-      return res.status(404).json({ Remark : 'No menu items for this seller yet' });
-    }
+      if (!menu || menu.items.length === 0) { 
+          return res.json({ categories: [] });
+      }
 
-    const filteredMenuItems = menu.items.map(item => ({
-      _id: item._id,
-      name: item.name,
-      name_en: item.name_en, 
-      description_en: item.description_en,
-      description: item.description,
-      price: item.price,
-      imageUrl: item.imageUrl,
-    }));
+      // Get unique categories that are actually used
+      const usedCategories = [...new Set(menu.items.map(item => item.category))];
 
-    res.json({ 
-      qrCodeUrl: menu.qrcode_url, // Assuming `qrcode_url` is the field name in the Menu schema
-      menuItems: filteredMenuItems 
-    });
+      // Count items in each category
+      // const categoriesWithCount = usedCategories.map(category => ({
+      //     name: category
+      //     // count: menu.items.filter(item => item.category === category).length
+      // }));
+
+      const categoriesWithCount = usedCategories;
+
+      res.json({ categories: categoriesWithCount });
   } catch (err) {
-    console.error('Error fetching menu:', err);
-    res.status(500).json({ error: 'Server error' });
+      console.error('Error:', err);
+      res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.get('/:seller_id/menu/:category', isLoggedIn, async (req, res) => {
+  try {
+      const menu = await Menu.findOne({ seller: req.params.seller_id });
+      const requestedCategory = decodeURIComponent(req.params.category);
+
+      if (!menu) {
+          return res.status(404).json({ 
+              message: 'No menu found for this seller' 
+          });
+      }
+
+      // Filter items by the requested category
+      const categoryItems = menu.items
+          .filter(item => item.category === requestedCategory)
+          .map(item => ({
+              _id: item._id,
+              name: item.name,
+              name_en: item.name_en,
+              description: item.description,
+              description_en: item.description_en,
+              price: item.price,
+              imageUrl: item.imageUrl,
+              category: item.category
+          }));
+
+      if (categoryItems.length === 0) {
+          return res.json({ 
+              message: `No items found in ${requestedCategory} category`,
+              items: []
+          });
+      }
+
+      res.json({
+          category: requestedCategory,
+          items: categoryItems
+      });
+  } catch (err) {
+      console.error('Error:', err);
+      res.status(500).json({ error: 'Server error' });
   }
 });
 
 
 router.post('/:seller_id/menu/:item_id', isLoggedIn, upload.single('image'), async (req, res) => {
-  const { name, description, price } = req.body;
+  const { name, description, price, category } = req.body;
+
+
+  if (category && !Object.values(CATEGORIES).includes(category)) {
+      return res.status(400).json({ 
+          error: `Invalid category. Must be one of: ${Object.values(CATEGORIES).join(', ')}` 
+      });
+  }
 
   try {
-    
-    const menu = await Menu.findOne({ 'items._id': req.params.item_id });
+      const menu = await Menu.findOne({ 'items._id': req.params.item_id });
 
-    if (!menu) {
-      return res.status(404).json({ error: 'Menu item not found' });
-    }
+      if (!menu) {
+          return res.status(404).json({ error: 'Menu item not found' });
+      }
 
-    const menuItem = menu.items.id(req.params.item_id);
+      const menuItem = menu.items.id(req.params.item_id);
 
-    
-    menuItem.name = name || menuItem.name;
-    menuItem.description = description || menuItem.description;
-    menuItem.price = price || menuItem.price;
+      // Update fields if provided
+      if (name) menuItem.name = name;
+      if (description) menuItem.description = description;
+      if (price) menuItem.price = price;
+      if (category) menuItem.category = category;
+      if (req.file) {
+          menuItem.imageUrl = req.file.location;
+      }
 
-    
-    if (req.file) {
-      const imageUrl = req.file.location;
-      menuItem.imageUrl = imageUrl;
-    }
+      // Handle translations
+      try {
+          if (name) {
+              menuItem.name_en = await translate(name);
+          }
+          if (description) {
+              menuItem.description_en = await translate(description);
+          }
+      } catch (translationError) {
+          console.error('Translation failed:', translationError.message);
+      }
 
-    
-    try {
-      const translatedName = await translate(name);
-      const translatedDescription = await translate(description);
-      menuItem.name_en = translatedName || menuItem.name_en;
-      menuItem.description_en = translatedDescription || menuItem.description_en;
-    } catch (translationError) {
-      console.error('Translation failed, using original text:', translationError.message);
-    }
-
-    // Save the updated menu
-    const updatedMenu = await menu.save();
-
-    res.json({ message: 'Menu item updated successfully!', menu: updatedMenu });
+      const updatedMenu = await menu.save();
+      res.json({ 
+          message: 'Menu item updated successfully!', 
+          menu: updatedMenu 
+      });
   } catch (err) {
-    console.error('Error updating menu item:', err);
-    res.status(500).json({ error: 'Error updating menu item' });
+      console.error('Error:', err);
+      res.status(500).json({ error: 'Error updating menu item' });
   }
 });
-
-// router.delete('/:id/menu/:id', async (req, res) => {
-//   const { id } = req.params;
-//   console.log(id);
-
-//   try {
-//     const deletedMenuItem = await Menu.findByIdAndDelete(id);
-
-//     if (!deletedMenuItem) {
-//       return res.status(404).json({ message: 'Menu item not found' });
-//     }
-
-//     res.json({
-//       message: 'Menu item deleted successfully!',
-//       menuItem: deletedMenuItem
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ error: 'Failed to delete menu item' });
-//   }
-// });
 
 router.delete('/:seller_id/menu/:item_id', async (req, res) => {
   const { seller_id, item_id } = req.params;
