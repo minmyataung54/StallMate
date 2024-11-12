@@ -8,7 +8,7 @@ const translate = require('../middleware/azure_translate');
 
 const router = express.Router();
 
-// S3 configuration
+
 const upload = multer({
     storage: multerS3({
         s3: s3Client,
@@ -24,7 +24,7 @@ const upload = multer({
     }),
 });
 
-// Create menu item
+
 router.put('/:seller_id/menu', isLoggedIn, upload.single('image'), async (req, res) => {
     const { name, description, price, category } = req.body;
 
