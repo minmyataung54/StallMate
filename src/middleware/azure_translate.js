@@ -25,7 +25,7 @@ const translate = async (text) => {
       }
     );
 
-    // Extract the translated text
+    
     return response.data[0].translations[0].text;
   } catch (error) {
     console.error('Translation error:', error.response ? error.response.data : error.message);
@@ -36,7 +36,3 @@ const translate = async (text) => {
 
 module.exports = translate;
 
-// // Testing the function
-// translate("ฉันอยากจะขับรถของคุณไปรอบ ๆ บล็อกสองสามครั้ง!")
-//   .then(translatedText => console.log("Translated Text:", translatedText))
-//   .catch(err => console.error(err));

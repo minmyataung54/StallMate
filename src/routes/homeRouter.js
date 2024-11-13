@@ -29,7 +29,7 @@ router.get('/dashboard/stallowner/:seller_id', isLoggedIn, (req, res) => {
 
 router.get('/dashboard/customer/:customer_id', isLoggedIn, (req, res) => {
     if (req.user) {
-        res.send(`Hello customer ${req.user.username}, welcome to StallMate!`);
+        res.send(`Hello customer ${req.user.username}, welcome to StallMate!!`);
     } else {
         res.redirect('/auth/customer/google');
     }
