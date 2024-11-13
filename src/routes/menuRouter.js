@@ -73,29 +73,46 @@ router.put('/:seller_id/menu', isLoggedIn, upload.single('image'), async (req, r
 });
 
 router.get('/:seller_id/menu', isLoggedIn, async (req, res) => {
-  try {
-      const menu = await Menu.findOne({ seller: req.params.seller_id });
+    try {
+        const menu = await Menu.findOne({ seller: req.params.seller_id });
 
-      if (!menu || menu.items.length === 0) { 
-          return res.json({ categories: [] });
-      }
+        if (!menu || menu.items.length === 0) {
+            return res.json({ 
+                message: 'No menu items available',
+                categories: [] 
+            });
+        }
 
-      // Get unique categories that are actually used
-      const usedCategories = [...new Set(menu.items.map(item => item.category))];
+        
+        const usedCategories = [...new Set(menu.items.map(item => item.category))]; 
+        const categorizedMenu = usedCategories.reduce((acc, category) => {
+        
+            const categoryItems = menu.items
+                .filter(item => item.category === category)
+                .map(item => ({
+                    _id: item._id,
+                    name: item.name,
+                    name_en: item.name_en,
+                    description: item.description,
+                    description_en: item.description_en,
+                    price: item.price,
+                    imageUrl: item.imageUrl
+                }));
 
-      // Count items in each category
-      // const categoriesWithCount = usedCategories.map(category => ({
-      //     name: category
-      //     // count: menu.items.filter(item => item.category === category).length
-      // }));
+        
+            acc[category] = categoryItems;
+            return acc;
+        }, {});
 
-      const categoriesWithCount = usedCategories;
+        res.json({ 
+            restaurant_id: menu.seller,
+            categories: categorizedMenu 
+        });
 
-      res.json({ categories: categoriesWithCount });
-  } catch (err) {
-      console.error('Error:', err);
-      res.status(500).json({ error: 'Server error' });
-  }
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 router.get('/:seller_id/menu/:category', isLoggedIn, async (req, res) => {
