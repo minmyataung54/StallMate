@@ -70,24 +70,21 @@ router.get('/customer/google/callback',
     }
 );
 
-// Google callback for stall owner
-router.get('/stallowner/google/callback', 
+router.get('/stallowner/google/callback',
     passport.authenticate('google-stallowner', {
-        failureRedirect: '/auth/failure?user=stallowner'
-    }), (req, res) => {
-    res.redirect(`/dashboard/stallowner/${req.user._id}`);
-});
+      failureRedirect: '/auth/failure?user=stallowner'
+    }), 
+    (req, res) => {
+      console.log('Authenticated User in Callback:', req.user);
+      req.session.save((err) => {
+        if (err) {
+          console.error('Error saving session:', err);
+        }
+        res.redirect(`/dashboard/stallowner/${req.user._id}`);
+      });
+    }
+  );
 
-// router.get('/customer/google/callback', 
-//     passport.authenticate('google-customer', {
-//         failureRedirect: '/auth/failure?user=customer'
-//     }), (req, res) => {
-//     // Use the redirect URL if it exists in session, otherwise go to default dashboard
-//     console.log('Redirecting to:', req.session.redirectTo);
-//     const redirectTo = req.session.redirectTo || `/dashboard/customer/${req.user._id}`;
-//     delete req.session.redirectTo; // Clear the session variable
-//     res.redirect(redirectTo);
-// });
 
 router.get('/failure', (req, res) => {
     const userType = req.query.user;

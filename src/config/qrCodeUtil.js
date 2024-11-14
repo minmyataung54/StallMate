@@ -1,7 +1,7 @@
 const QRCode = require('qrcode');
 const { v4: uuidv4 } = require('uuid');
 const s3Client = require('./s3Client');
-const Menu = require('../models/menuSchema');
+const { Menu } = require('../models/menuSchema');
 const { PutObjectCommand } = require('@aws-sdk/client-s3');
 
 /**
