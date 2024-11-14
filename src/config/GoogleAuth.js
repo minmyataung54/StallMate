@@ -9,8 +9,8 @@ const { generateAndSaveQRCode } = require('./qrCodeUtil');
 passport.use('google-stallowner', new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "https://stall-mate.vercel.app/auth/stallowner/google/callback",
-    // callbackURL: "http://localhost:3000/auth/stallowner/google/callback",
+    // callbackURL: "https://stall-mate.vercel.app/auth/stallowner/google/callback",
+    callbackURL: "http://ec2-13-215-252-79.ap-southeast-1.compute.amazonaws.com:3000/auth/stallowner/google/callback",
     passReqToCallback: true,
   },
   async (request, accessToken, refreshToken, profile, done) => {
@@ -40,8 +40,8 @@ passport.use('google-stallowner', new GoogleStrategy({
 passport.use('google-customer', new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "https://stall-mate.vercel.app/auth/customer/google/callback",
-  // callbackURL: "http://localhost:3000/auth/customer/google/callback",
+  // callbackURL: "https://stall-mate.vercel.app/auth/customer/google/callback",
+  callbackURL: "http://ec2-13-215-252-79.ap-southeast-1.compute.amazonaws.com:3000/auth/customer/google/callback",
   passReqToCallback: true,
 },
 async (request, accessToken, refreshToken, profile, done) => {
@@ -72,23 +72,25 @@ passport.serializeUser((user, done) => {
   done(null, { id: user.id, userType });
 });
 
-
 passport.deserializeUser(async ({ id, userType }, done) => {
   try {
-    const foundUser = userType === 'StallOwner'
-      ? await User.findById(id)
-      : await Customer.findById(id);
+      console.log('Deserializing User with ID:', id, 'and UserType:', userType);
 
-    if (!foundUser) {
-      console.error('User not found in database');
-      return done(null, false); // Return false if no user is found
-    }
+      // Attempt to fetch the user from the correct model
+      const foundUser = userType === 'StallOwner'
+          ? await User.findById(id)
+          : await Customer.findById(id);
 
-    console.log('Deserialized User:', foundUser);
-    done(null, foundUser);
+      if (!foundUser) {
+          console.error('User not found in database during deserialization');
+          return done(null, false); // Return false if no user is found
+      }
+
+      console.log('Deserialized User:', foundUser);
+      done(null, foundUser); // Attach the user object to req.user
   } catch (error) {
-    console.error('Error in deserialization:', error);
-    done(error, null);
+      console.error('Error during deserialization:', error);
+      done(error, null);
   }
 });
 

@@ -1,44 +1,66 @@
 const express = require('express');
 const session = require('express-session');
+const passport = require('passport'); 
+const MongoStore = require('connect-mongo'); // Import connect-mongo
+const connectDB = require('./config/db'); 
 const passportConfig = require('./config/passportConfig');
 const authRouter = require('./routes/authRouter');
 const homeRouter = require('./routes/homeRouter');
 const menuRouter = require('./routes/menuRouter');
-const connectDB = require('./config/db');
-const isLoggedIn = require('./middleware/authMiddleWare');
 const setupProfileRouter = require('./routes/setupProfileRouter');
-require('dotenv').config();
-require('./config/GoogleAuth');
+const isLoggedIn = require('./middleware/authMiddleWare');
+require('./config/GoogleAuth'); 
 
 const app = express();
 
+// Trust the proxy (important for secure cookies on platforms like Vercel)
 app.set('trust proxy', 1);
 
+// Connect to MongoDB (if you're using a database)
 connectDB();
 
+// Configure session with connect-mongo
 app.use(session({
-    secret: 'sessionStallMate',
-    resave: true,
-    saveUninitialized: false,
+    secret: 'StallMate', // Use a strong, secure secret
+    resave: false, // Do not resave sessions if not modified
+    saveUninitialized: false, // Do not save uninitialized sessions
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI, 
+        collectionName: 'sessions', // Collection name for sessions
+        ttl: 60 * 60 // Session expiration in seconds (1 hour)
+    }),
     cookie: {
         maxAge: 60 * 60 * 1000, // 1 hour
-        secure: true,
-        // secure : false,
-        // sameSite: 'lax' // 
-        sameSite: 'none'
+        secure: false, // Ensure cookies are only sent over HTTPS
+        sameSite: 'lax', // Required for cross-site cookies on Vercel
+        httpOnly: true // Protect against XSS
     }
 }));
 
-passportConfig(app);
+app.use(passport.initialize());
+app.use(passport.session());
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Debug route
+app.get('/debug', (req, res) => {
+    res.json({
+        sessionId: req.sessionID,
+        session: req.session,
+        user: req.user,
+        isAuthenticated: req.isAuthenticated()
+    });
+});
+// Define routes
 app.use('/', homeRouter);
 app.use('/auth', authRouter);
 app.use('/dashboard/stallowner', isLoggedIn, setupProfileRouter);
 app.use('/dashboard/stallowner', isLoggedIn, menuRouter);
 
-
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
+// Start the server
+app.listen(3000, () => {
+    console.log('Server is listening on port 3000');
 });
-module.exports = app
+
+module.exports = app;
