@@ -49,16 +49,20 @@ router.get('/customer/google/callback',
             }
         }
 
+        // Store customerID in the session
+        req.session.customerID = req.user._id; // Assuming req.user._id is the customer's ID
+        console.log('Stored customerID in session:', req.session.customerID);
+
         // Determine redirect path with fallbacks
         const redirectTo = req.session.redirectTo || 
-                         stateRedirect || 
-                         `/dashboard/customer/${req.user._id}`;
+                           stateRedirect || 
+                           `/dashboard/customer/${req.user._id}`;
 
         console.log('Final redirect path:', redirectTo);
-        
+
         // Clear the redirect URL from session
         delete req.session.redirectTo;
-        
+
         // Save session before redirect
         req.session.save((err) => {
             if (err) {

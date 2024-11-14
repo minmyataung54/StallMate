@@ -39,12 +39,13 @@ async function generateAndSaveQRCode(userID) {
         } else {
             menu.qrcode_url = qrCodeUrl;
         }
-        
-        await menu.save();  
-        console.log('QR code generated and saved to S3 and Menu schema:', qrCodeUrl);
-        
-        return qrCodeUrl;
 
+        console.log('Before saving menu:', menu);
+
+        
+        await menu.save();
+
+        return qrCodeUrl;
     } catch (err) {
         console.error('Error generating or saving QR code:', err);
         throw err;

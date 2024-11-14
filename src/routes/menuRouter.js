@@ -74,6 +74,8 @@ router.put('/:seller_id/menu', isLoggedIn, upload.single('image'), async (req, r
 
 router.get('/:seller_id/menu', isLoggedIn, async (req, res) => {
     try {
+        console.log('Customer ID from session:', req.session.customerID);
+        
         const menu = await Menu.findOne({ seller: req.params.seller_id });
 
         if (!menu || menu.items.length === 0) {
