@@ -9,8 +9,8 @@ const { generateAndSaveQRCode } = require('./qrCodeUtil');
 passport.use('google-stallowner', new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    // callbackURL: "https://stall-mate.vercel.app/auth/stallowner/google/callback",
-    callbackURL: "http://localhost:3000/auth/stallowner/google/callback",
+    callbackURL: "https://stall-mate.vercel.app/auth/stallowner/google/callback",
+    // callbackURL: "http://localhost:3000/auth/stallowner/google/callback",
     passReqToCallback: true,
   },
   async (request, accessToken, refreshToken, profile, done) => {
@@ -40,8 +40,8 @@ passport.use('google-stallowner', new GoogleStrategy({
 passport.use('google-customer', new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  // callbackURL: "https://stall-mate.vercel.app/auth/customer/google/callback",
-  callbackURL: "http://localhost:3000/auth/customer/google/callback",
+  callbackURL: "https://stall-mate.vercel.app/auth/customer/google/callback",
+  // callbackURL: "http://localhost:3000/auth/customer/google/callback",
   passReqToCallback: true,
 },
 async (request, accessToken, refreshToken, profile, done) => {

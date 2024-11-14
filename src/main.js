@@ -22,9 +22,10 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         maxAge: 60 * 60 * 1000, // 1 hour
-        // secure: true,
-        secure : false,
-        sameSite: 'lax' // Use `lax` for development
+        secure: true,
+        // secure : false,
+        // sameSite: 'lax' // 
+        sameSite: 'none'
     }
 }));
 
