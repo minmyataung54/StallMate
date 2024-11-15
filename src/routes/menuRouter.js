@@ -129,7 +129,6 @@ router.get('/:seller_id/menu/category/:category', isLoggedIn, async (req, res) =
           });
       }
 
-      // Filter items by the requested category
       const categoryItems = menu.items
           .filter(item => item.category === requestedCategory)
           .map(item => ({
@@ -240,20 +239,18 @@ router.delete('/:seller_id/menu/:item_id', async (req, res) => {
 router.put('/:seller_id/menu/cart', isLoggedIn, async (req, res) => {
     try {
         const customerId = req.user._id;
-        const stallownerId = req.params.seller_id; // Extract stallownerId from the URL
+        const stallownerId = req.params.seller_id; 
         const { items } = req.body;
 
         if (!Array.isArray(items) || items.length === 0) {
             return res.status(400).json({ error: 'No items provided' });
         }
 
-        // Fetch the Menu document for the given stallowner_id (seller_id)
         const menu = await Menu.findOne({ seller: stallownerId });
         if (!menu) {
             return res.status(404).json({ error: 'Menu not found for the given stallowner' });
         }
 
-        // Validate each menuId against the items in the Menu document
         for (const item of items) {
             const menuItem = menu.items.find(menuItem => menuItem._id.toString() === item.menuId);
             if (!menuItem) {
@@ -266,14 +263,13 @@ router.put('/:seller_id/menu/cart', isLoggedIn, async (req, res) => {
         if (!cart) {
             cart = new Cart({
                 userId: customerId,
-                stallownerId: stallownerId, // Include the stallownerId when creating a new cart
+                stallownerId: stallownerId, 
                 items: [],
             });
         } else {
-            cart.stallownerId = stallownerId; // Ensure stallownerId is set when updating an existing cart
+            cart.stallownerId = stallownerId; 
         }
 
-        // Add or update items in the cart
         items.forEach(({ menuId, quantity, notes }) => {
             const existingItemIndex = cart.items.findIndex(item => item.menuId.toString() === menuId);
             if (existingItemIndex >= 0) {
@@ -298,31 +294,32 @@ router.put('/:seller_id/menu/cart', isLoggedIn, async (req, res) => {
 });
 router.get('/:seller_id/menu/cart', isLoggedIn, async (req, res) => {
     try {
-        const customerId = req.user._id; // The ID of the customer (user)
-        const sellerId = req.params.seller_id; // The ID of the stall owner (seller)
+        const customerId = req.user._id;
+        const sellerId = req.params.seller_id; 
 
-        console.log('Customer ID:', customerId); // Debugging: Log the customer ID
-        console.log('Seller ID:', sellerId); // Debugging: Log the seller ID
+        console.log('Customer ID:', customerId); 
+        console.log('Seller ID:', sellerId); 
 
-        // Fetch the Menu document for the given sellerId
         const menu = await Menu.findOne({ seller: sellerId });
         if (!menu) {
             console.log('Menu not found for the given seller ID');
             return res.status(404).json({ error: 'Menu not found for the given seller' });
         }
 
-        // Find the customer's cart
+        
         const cart = await Cart.findOne({ userId: customerId });
         if (!cart || cart.items.length === 0) {
             console.log('Cart is empty or no items found for this seller');
             return res.json({ message: 'Your cart is empty', items: [] });
         }
 
-        // Filter cart items to include only those that match menu items for the given seller
+        let total = 0;
         const cartItems = cart.items.map(item => {
-            // Check if the item exists in the menu for this seller
+            
             const menuItem = menu.items.find(menuItem => menuItem._id.toString() === item.menuId.toString());
             if (menuItem) {
+                const itemTotal = menuItem.price * item.quantity;
+                total += itemTotal;
                 return {
                     _id: menuItem._id,
                     name: menuItem.name,
@@ -332,16 +329,18 @@ router.get('/:seller_id/menu/cart', isLoggedIn, async (req, res) => {
                     price: menuItem.price,
                     imageUrl: menuItem.imageUrl,
                     quantity: item.quantity,
-                    notes: item.notes
+                    notes: item.notes,
+                    itemTotal
                 };
             } else {
-                return null; // Item not found in the seller's menu
+                return null; 
             }
-        }).filter(item => item !== null); // Remove null items
+        }).filter(item => item !== null); 
 
-        console.log('Filtered Cart Items:', cartItems); // Debugging: Log the filtered cart items
+        console.log('Filtered Cart Items:', cartItems); 
+        console.log('Total Price:', total); // Debugging: Log the total price
 
-        res.json({ items: cartItems });
+        res.json({ items: cartItems, total });
     } catch (error) {
         console.error('Error fetching cart:', error); // Debugging: Log the error
         res.status(500).json({ error: 'Failed to fetch cart' });
