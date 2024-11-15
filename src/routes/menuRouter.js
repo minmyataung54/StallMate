@@ -305,8 +305,6 @@ router.get('/:seller_id/menu/cart', isLoggedIn, async (req, res) => {
             console.log('Menu not found for the given seller ID');
             return res.status(404).json({ error: 'Menu not found for the given seller' });
         }
-
-        
         const cart = await Cart.findOne({ userId: customerId });
         if (!cart || cart.items.length === 0) {
             console.log('Cart is empty or no items found for this seller');
@@ -344,6 +342,51 @@ router.get('/:seller_id/menu/cart', isLoggedIn, async (req, res) => {
     } catch (error) {
         console.error('Error fetching cart:', error); // Debugging: Log the error
         res.status(500).json({ error: 'Failed to fetch cart' });
+    }
+});
+
+router.post('/:seller_id/menu/cart/', isLoggedIn, async (req, res) => {
+    try {
+        const customerId = req.user._id; 
+        const stallownerId = req.params.seller_id; 
+        const { items } = req.body; 
+
+        if (!Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ error: 'No items provided for editing' });
+        }
+
+        
+        let cart = await Cart.findOne({ userId: customerId, stallownerId: stallownerId });
+        if (!cart) {
+            return res.status(404).json({ error: 'Cart not found for this customer and stallowner' });
+        }
+
+        
+        items.forEach(({ menuId, quantity, notes }) => {
+            const itemIndex = cart.items.findIndex(item => item.menuId.toString() === menuId);
+
+            if (itemIndex >= 0) {
+                if (quantity !== undefined) {
+                    cart.items[itemIndex].quantity = quantity;
+                }
+                if (notes !== undefined) {
+                    cart.items[itemIndex].notes = notes;
+                }
+                
+                if (cart.items[itemIndex].quantity <= 0) {
+                    cart.items.splice(itemIndex, 1);
+                }
+            } else {
+                return res.status(404).json({ error: `Menu item with ID ${menuId} not found in the cart` });
+            }
+        });
+
+        // Save the updated cart
+        await cart.save();
+        res.status(200).json({ message: 'Cart updated successfully', cart });
+    } catch (error) {
+        console.error('Error editing cart items:', error);
+        res.status(500).json({ error: 'Failed to edit cart items' });
     }
 });
 
