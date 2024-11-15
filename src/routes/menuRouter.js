@@ -326,8 +326,9 @@ router.get('/:seller_id/menu/cart', isLoggedIn, async (req, res) => {
                 return {
                     _id: menuItem._id,
                     name: menuItem.name,
-                    // name_en: menuItem.name_en,
+                    name_en: menuItem.name_en,
                     description: menuItem.description,
+                    description_en: menuItem.description_en,
                     price: menuItem.price,
                     imageUrl: menuItem.imageUrl,
                     quantity: item.quantity,
