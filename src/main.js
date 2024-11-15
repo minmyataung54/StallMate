@@ -7,6 +7,7 @@ const passportConfig = require('./config/passportConfig');
 const authRouter = require('./routes/authRouter');
 const homeRouter = require('./routes/homeRouter');
 const menuRouter = require('./routes/menuRouter');
+const cart = require('./routes/cart');
 const setupProfileRouter = require('./routes/setupProfileRouter');
 const isLoggedIn = require('./middleware/authMiddleWare');
 require('./config/GoogleAuth'); 
@@ -21,13 +22,13 @@ connectDB();
 
 // Configure session with connect-mongo
 app.use(session({
-    secret: 'StallMate', // Use a strong, secure secret
-    resave: false, // Do not resave sessions if not modified
-    saveUninitialized: false, // Do not save uninitialized sessions
+    secret: 'StallMate', 
+    resave: false, 
+    saveUninitialized: false, 
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URI, 
-        collectionName: 'sessions', // Collection name for sessions
-        ttl: 60 * 60 // Session expiration in seconds (1 hour)
+        collectionName: 'sessions', 
+        ttl: 60 * 60 
     }),
     cookie: {
         maxAge: 60 * 60 * 1000, // 1 hour
@@ -56,6 +57,7 @@ app.get('/debug', (req, res) => {
 app.use('/', homeRouter);
 app.use('/auth', authRouter);
 app.use('/dashboard/stallowner', isLoggedIn, setupProfileRouter);
+// app.use('/dashboard/stallowner', isLoggedIn, cart);
 app.use('/dashboard/stallowner', isLoggedIn, menuRouter);
 
 // Start the server

@@ -11,7 +11,8 @@ const { PutObjectCommand } = require('@aws-sdk/client-s3');
  */
 async function generateAndSaveQRCode(userID) {
     try {
-        const menuUrl = `https://stall-mate.vercel.app/auth/customer/google?redirectTo=/dashboard/stallowner/${userID}/menu`;
+        // const menuUrl = `http://ec2-13-215-252-79.ap-southeast-1.compute.amazonaws.com:3000/auth/customer/google?redirectTo=/dashboard/stallowner/${userID}/menu`;
+        const menuUrl = `http://localhost:3000/auth/customer/google?redirectTo=/dashboard/stallowner/${userID}/menu`;
         const qrCodeDataUrl = await QRCode.toDataURL(menuUrl);
         const base64Data = qrCodeDataUrl.replace(/^data:image\/png;base64,/, "");
         const buffer = Buffer.from(base64Data, 'base64');

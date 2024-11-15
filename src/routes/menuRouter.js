@@ -5,6 +5,7 @@ const s3Client = require('../config/s3Client');
 const { Menu, CATEGORIES } = require('../models/menuSchema');
 const isLoggedIn = require('../middleware/authMiddleWare');
 const translate = require('../middleware/azure_translate');
+const Cart = require('../models/cartSchema');
 
 const router = express.Router();
 
@@ -117,7 +118,7 @@ router.get('/:seller_id/menu', isLoggedIn, async (req, res) => {
     }
 });
 
-router.get('/:seller_id/menu/:category', isLoggedIn, async (req, res) => {
+router.get('/:seller_id/menu/category/:category', isLoggedIn, async (req, res) => {
   try {
       const menu = await Menu.findOne({ seller: req.params.seller_id });
       const requestedCategory = decodeURIComponent(req.params.category);
@@ -234,6 +235,116 @@ router.delete('/:seller_id/menu/:item_id', async (req, res) => {
     console.log(err);
     res.status(500).json({ error: 'Failed to delete menu item' });
   }
+});
+
+router.put('/:seller_id/menu/cart', isLoggedIn, async (req, res) => {
+    try {
+        const customerId = req.user._id;
+        const stallownerId = req.params.seller_id; // Extract stallownerId from the URL
+        const { items } = req.body;
+
+        if (!Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ error: 'No items provided' });
+        }
+
+        // Fetch the Menu document for the given stallowner_id (seller_id)
+        const menu = await Menu.findOne({ seller: stallownerId });
+        if (!menu) {
+            return res.status(404).json({ error: 'Menu not found for the given stallowner' });
+        }
+
+        // Validate each menuId against the items in the Menu document
+        for (const item of items) {
+            const menuItem = menu.items.find(menuItem => menuItem._id.toString() === item.menuId);
+            if (!menuItem) {
+                return res.status(404).json({ error: `Menu item with ID ${item.menuId} not found for this stallowner` });
+            }
+        }
+
+        // Find or create the customer's cart
+        let cart = await Cart.findOne({ userId: customerId });
+        if (!cart) {
+            cart = new Cart({
+                userId: customerId,
+                stallownerId: stallownerId, // Include the stallownerId when creating a new cart
+                items: [],
+            });
+        } else {
+            cart.stallownerId = stallownerId; // Ensure stallownerId is set when updating an existing cart
+        }
+
+        // Add or update items in the cart
+        items.forEach(({ menuId, quantity, notes }) => {
+            const existingItemIndex = cart.items.findIndex(item => item.menuId.toString() === menuId);
+            if (existingItemIndex >= 0) {
+                cart.items[existingItemIndex].quantity += quantity;
+                if (notes) cart.items[existingItemIndex].notes = notes;
+            } else {
+                cart.items.push({
+                    menuId,
+                    quantity: quantity || 1,
+                    notes: notes || '',
+                });
+            }
+        });
+
+        // Save the updated cart
+        await cart.save();
+        res.status(200).json({ message: 'Items added to cart successfully', cart });
+    } catch (error) {
+        console.error('Error adding items to cart:', error);
+        res.status(500).json({ error: 'Failed to add items to cart' });
+    }
+});
+router.get('/:seller_id/menu/cart', isLoggedIn, async (req, res) => {
+    try {
+        const customerId = req.user._id; // The ID of the customer (user)
+        const sellerId = req.params.seller_id; // The ID of the stall owner (seller)
+
+        console.log('Customer ID:', customerId); // Debugging: Log the customer ID
+        console.log('Seller ID:', sellerId); // Debugging: Log the seller ID
+
+        // Fetch the Menu document for the given sellerId
+        const menu = await Menu.findOne({ seller: sellerId });
+        if (!menu) {
+            console.log('Menu not found for the given seller ID');
+            return res.status(404).json({ error: 'Menu not found for the given seller' });
+        }
+
+        // Find the customer's cart
+        const cart = await Cart.findOne({ userId: customerId });
+        if (!cart || cart.items.length === 0) {
+            console.log('Cart is empty or no items found for this seller');
+            return res.json({ message: 'Your cart is empty', items: [] });
+        }
+
+        // Filter cart items to include only those that match menu items for the given seller
+        const cartItems = cart.items.map(item => {
+            // Check if the item exists in the menu for this seller
+            const menuItem = menu.items.find(menuItem => menuItem._id.toString() === item.menuId.toString());
+            if (menuItem) {
+                return {
+                    _id: menuItem._id,
+                    name: menuItem.name,
+                    // name_en: menuItem.name_en,
+                    description: menuItem.description,
+                    price: menuItem.price,
+                    imageUrl: menuItem.imageUrl,
+                    quantity: item.quantity,
+                    notes: item.notes
+                };
+            } else {
+                return null; // Item not found in the seller's menu
+            }
+        }).filter(item => item !== null); // Remove null items
+
+        console.log('Filtered Cart Items:', cartItems); // Debugging: Log the filtered cart items
+
+        res.json({ items: cartItems });
+    } catch (error) {
+        console.error('Error fetching cart:', error); // Debugging: Log the error
+        res.status(500).json({ error: 'Failed to fetch cart' });
+    }
 });
 
 module.exports = router;

@@ -10,7 +10,8 @@ passport.use('google-stallowner', new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     // callbackURL: "https://stall-mate.vercel.app/auth/stallowner/google/callback",
-    callbackURL: "http://ec2-13-215-252-79.ap-southeast-1.compute.amazonaws.com:3000/auth/stallowner/google/callback",
+    // callbackURL: "http://ec2-13-215-252-79.ap-southeast-1.compute.amazonaws.com:3000/auth/stallowner/google/callback",
+    callbackURL: "http://localhost:3000/auth/stallowner/google/callback",
     passReqToCallback: true,
   },
   async (request, accessToken, refreshToken, profile, done) => {
@@ -41,7 +42,8 @@ passport.use('google-customer', new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   // callbackURL: "https://stall-mate.vercel.app/auth/customer/google/callback",
-  callbackURL: "http://ec2-13-215-252-79.ap-southeast-1.compute.amazonaws.com:3000/auth/customer/google/callback",
+  // callbackURL: "http://ec2-13-215-252-79.ap-southeast-1.compute.amazonaws.com:3000/auth/customer/google/callback",
+  callbackURL: "http://localhost:3000/auth/customer/google/callback",
   passReqToCallback: true,
 },
 async (request, accessToken, refreshToken, profile, done) => {
@@ -68,7 +70,7 @@ async (request, accessToken, refreshToken, profile, done) => {
 
 passport.serializeUser((user, done) => {
   const userType = user instanceof User ? 'StallOwner' : 'Customer';
-  console.log('Serializing User:', { id: user.id, userType });
+  // console.log('Serializing User:', { id: user.id, userType });
   done(null, { id: user.id, userType });
 });
 
@@ -76,17 +78,17 @@ passport.deserializeUser(async ({ id, userType }, done) => {
   try {
       console.log('Deserializing User with ID:', id, 'and UserType:', userType);
 
-      // Attempt to fetch the user from the correct model
+
       const foundUser = userType === 'StallOwner'
           ? await User.findById(id)
           : await Customer.findById(id);
 
       if (!foundUser) {
           console.error('User not found in database during deserialization');
-          return done(null, false); // Return false if no user is found
+          return done(null, false); 
       }
 
-      console.log('Deserialized User:', foundUser);
+      // console.log('Deserialized User:', foundUser);
       done(null, foundUser); // Attach the user object to req.user
   } catch (error) {
       console.error('Error during deserialization:', error);
