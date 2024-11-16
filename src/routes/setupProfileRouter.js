@@ -4,9 +4,8 @@ const isLoggedIn = require('../middleware/authMiddleWare');
 const router = express.Router();
 const multer = require('multer');
 const multerS3 = require('multer-s3');
-const s3Client = require('../config/s3Client'); // Reuse existing s3Client configuration
+const s3Client = require('../config/s3Client'); 
 
-// Set up multer for S3 upload with existing s3Client
 const upload = multer({
     storage: multerS3({
         s3: s3Client,
@@ -23,7 +22,6 @@ const upload = multer({
 });
 
 
-// Update PUT route with file upload
 router.put('/:seller_id/profile', isLoggedIn, upload.fields([{ name: 'profilePhoto' }, { name: 'restaurantPhoto' }]), async (req, res) => {
     try {
         const { fullName, bio, experienceYears, restaurantName, location, openingHours, contact } = req.body;
@@ -55,7 +53,7 @@ router.put('/:seller_id/profile', isLoggedIn, upload.fields([{ name: 'profilePho
     }
 });
 
-// Update POST route with file upload for profile update
+
 router.post('/:seller_id/profile', isLoggedIn, upload.fields([{ name: 'profilePhoto' }, { name: 'restaurantPhoto' }]), async (req, res) => {
     try {
         const { fullName, bio, experienceYears, restaurantName, location, openingHours, contact } = req.body;
@@ -93,7 +91,7 @@ router.get('/:seller_id/profile', async (req, res) => {
     try {
         const profile = await StallOwnerProfile.findOne({ StallOwnerID: req.params.seller_id });
         if (!profile) {
-            return res.status(404).json({ error: 'Profile not found' });
+            return res.status(200).json({ message: 'Profile not found' });
         }
         res.json({ profile });
     } catch (error) {

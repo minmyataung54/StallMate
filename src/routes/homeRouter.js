@@ -19,8 +19,8 @@ router.get('/', (req, res) => {
 router.get('/dashboard/stallowner/:seller_id', isLoggedIn, (req, res) => {
     if (req.user) {
         res.send(`Hello stall owner ${req.user.username}, welcome to StallMate! <a href="/dashboard/stallowner/${req.params.seller_id}/menu">Go to menu</a> <br>
-            <a href="/dashboard/stallowner/${req.params.seller_id}/profile">Go to profile</a>`);
-
+            <a href="/dashboard/stallowner/${req.params.seller_id}/profile">Go to profile</a> <br> 
+            <a href="/dashboard/stallowner/${req.params.seller_id}/orders">Go to orders</a>`);
     } else {
         res.redirect('/auth/stallowner/google');
     }
@@ -34,6 +34,7 @@ router.get('/dashboard/customer/:customer_id', isLoggedIn, (req, res) => {
         res.redirect('/auth/customer/google');
     }
 });
+
 
 
 module.exports = router;

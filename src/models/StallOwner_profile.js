@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const moment = require('moment-timezone');
+const { BigPool } = require('pixi.js');
 
 const openingHoursSchema = new mongoose.Schema({
     weekday: { type: String, required: true },
@@ -36,7 +37,9 @@ const stallOwnerProfileSchema = new mongoose.Schema({
     StallOwnerID: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     owner_profile : {
         full_name: { type: String, required: true },
-        profile_photo : {type : String}
+        profile_photo : {type : String},
+        bio : { type: String },
+        experience_years : { type: Number }
     },
     restaurant : restaurantSchema
 }, {

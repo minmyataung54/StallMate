@@ -8,6 +8,7 @@ const authRouter = require('./routes/authRouter');
 const homeRouter = require('./routes/homeRouter');
 const menuRouter = require('./routes/menuRouter');
 const orderRouter = require('./routes/orderRouter');
+const customerOrder = require('./routes/customerOrderRouter');
 const setupProfileRouter = require('./routes/setupProfileRouter');
 const isLoggedIn = require('./middleware/authMiddleWare');
 
@@ -61,6 +62,7 @@ app.use('/dashboard/stallowner', isLoggedIn, setupProfileRouter);
 // app.use('/dashboard/stallowner', isLoggedIn, cart);
 app.use('/dashboard/stallowner', isLoggedIn, orderRouter);
 app.use('/dashboard/stallowner', isLoggedIn, menuRouter);
+app.use('/dashboard/customer', isLoggedIn, customerOrder);
 
 // Start the server
 app.listen(3000, () => {
