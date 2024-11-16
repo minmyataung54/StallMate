@@ -7,9 +7,10 @@ const passportConfig = require('./config/passportConfig');
 const authRouter = require('./routes/authRouter');
 const homeRouter = require('./routes/homeRouter');
 const menuRouter = require('./routes/menuRouter');
-const cart = require('./routes/cart');
+const orderRouter = require('./routes/orderRouter');
 const setupProfileRouter = require('./routes/setupProfileRouter');
 const isLoggedIn = require('./middleware/authMiddleWare');
+
 require('./config/GoogleAuth'); 
 
 const app = express();
@@ -58,6 +59,7 @@ app.use('/', homeRouter);
 app.use('/auth', authRouter);
 app.use('/dashboard/stallowner', isLoggedIn, setupProfileRouter);
 // app.use('/dashboard/stallowner', isLoggedIn, cart);
+app.use('/dashboard/stallowner', isLoggedIn, orderRouter);
 app.use('/dashboard/stallowner', isLoggedIn, menuRouter);
 
 // Start the server
