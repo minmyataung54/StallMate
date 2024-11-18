@@ -5,7 +5,7 @@ const isLoggedIn = require('../middleware/authMiddleware');
 const router = express.Router();
 
 
-router.put('/:seller_id/rate', isLoggedIn, async (req, res) => {
+router.put('/:customer_id/history/:seller_id/rate', isLoggedIn, async (req, res) => {
     try {
         const customerId = req.user._id; 
         const sellerId = req.params.seller_id; 

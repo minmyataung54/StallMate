@@ -63,7 +63,7 @@ app.use('/dashboard/stallowner', isLoggedIn, setupProfileRouter);
 app.use('/dashboard/stallowner', isLoggedIn, orderRouter);
 app.use('/dashboard/stallowner', isLoggedIn, menuRouter);
 app.use('/dashboard/customer', isLoggedIn, customerOrder);
-app.use('/dashboard/stallowner', isLoggedIn, ratingRouter);
+app.use('/dashboard/customer', isLoggedIn, ratingRouter);
 app.use('/dashboard/customer', isLoggedIn, favoriteStallRouter);
 
 
