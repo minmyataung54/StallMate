@@ -50,8 +50,8 @@ router.put('/:customer_id/history/:seller_id/rate', isLoggedIn, async (req, res)
 
         stallOwnerProfile.restaurant.rating.number_of_reviews += 1;
 
-        // Correct the average rating calculation
-        const previousTotalRating = stallOwnerProfile.restaurant.rating.average ;
+        
+        const previousTotalRating = stallOwnerProfile.restaurant.rating.average * stallOwnerProfile.restaurant.rating.number_of_reviews;
         const newTotalRating = previousTotalRating + rating;
         console.log(newTotalRating);
         console.log(stallOwnerProfile.restaurant.rating.number_of_reviews);
