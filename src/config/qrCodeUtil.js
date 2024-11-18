@@ -42,8 +42,7 @@ async function generateAndSaveQRCode(userID) {
         }
 
         console.log('Before saving menu:', menu);
-
-        
+ 
         await menu.save();
 
         return qrCodeUrl;
