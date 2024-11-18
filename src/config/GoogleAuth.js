@@ -23,6 +23,7 @@ passport.use('google-stallowner', new GoogleStrategy({
       } else {
         const newUser = new User({
           username: profile.displayName,
+          // email: profile.emails[0].value,
           googleID: profile.id
         });
         const qrCodeUrl = await generateAndSaveQRCode(newUser._id);
@@ -55,6 +56,7 @@ async (request, accessToken, refreshToken, profile, done) => {
     } else {
       const newCustomer = new Customer({
         username: profile.displayName,
+        email: profile.emails[0].value,
         googleID: profile.id
       });
       await newCustomer.save();

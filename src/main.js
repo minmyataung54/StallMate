@@ -10,7 +10,7 @@ const menuRouter = require('./routes/menuRouter');
 const orderRouter = require('./routes/orderRouter');
 const customerOrder = require('./routes/customerOrderRouter');
 const setupProfileRouter = require('./routes/setupProfileRouter');
-const isLoggedIn = require('./middleware/authMiddleWare');
+const isLoggedIn = require('./middleware/authMiddleware');
 
 require('./config/GoogleAuth'); 
 

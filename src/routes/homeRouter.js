@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const isLoggedIn = require('../middleware/authMiddleWare.js');
+const isLoggedIn = require('../middleware/authMiddleware');
 
 // function isLoggedIn(req,res,next) {
 //     if (req.isAuthenticated()){

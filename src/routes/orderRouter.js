@@ -1,7 +1,7 @@
 const express = require("express");
 const Order = require("../models/orderSchema");
 const { Menu } = require("../models/menuSchema");
-const isLoggedIn = require("../middleware/authMiddleWare");
+const isLoggedIn = require("../middleware/authMiddleware");
 const router = express.Router();
 
 router.put("/:seller_id/orders", isLoggedIn, async (req, res) => {

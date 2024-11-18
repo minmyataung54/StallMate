@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const moment = require('moment-timezone');
-const { BigPool } = require('pixi.js');
+
 
 const openingHoursSchema = new mongoose.Schema({
     weekday: { type: String, required: true },
