@@ -56,7 +56,8 @@ router.get('/:_id/favorites', isLoggedIn, async (req, res) => {
                     name: stallOwnerProfile.restaurant.name,
                     image: stallOwnerProfile.restaurant.photo,
                     rating: stallOwnerProfile.restaurant.rating,
-                    menuUrl: `http://localhost:3000/dashboard/stallowner/${stallOwnerProfile.StallOwnerID}/menu/`
+                    menuUrl: `http://ec2-13-215-252-79.ap-southeast-1.compute.amazonaws.com:3000/dashboard/stallowner/${stallOwnerProfile.StallOwnerID}/menu/`,
+                    // menuUrl: `http://localhost:3000/dashboard/stallowner/${stallOwnerProfile.StallOwnerID}/menu/`
                 };
             }
             return null;
