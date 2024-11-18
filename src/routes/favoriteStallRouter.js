@@ -52,7 +52,7 @@ router.get('/:_id/favorites', isLoggedIn, async (req, res) => {
             const stallOwnerProfile = await StallOwnerProfile.findOne({ StallOwnerID: favorite.stallownerID._id });
             if (stallOwnerProfile) {
                 return {
-                    // id: favorite.stallownerID._id,
+                    id: favorite.stallownerID._id,
                     name: stallOwnerProfile.restaurant.name,
                     image: stallOwnerProfile.restaurant.photo,
                     rating: stallOwnerProfile.restaurant.rating,
