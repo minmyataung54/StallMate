@@ -1,7 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport'); 
-const MongoStore = require('connect-mongo'); // Import connect-mongo
+const MongoStore = require('connect-mongo'); 
 const connectDB = require('./config/db'); 
 const passportConfig = require('./config/passportConfig');
 const authRouter = require('./routes/authRouter');
@@ -18,13 +18,11 @@ require('./config/GoogleAuth');
 
 const app = express();
 
-// Trust the proxy (important for secure cookies on platforms like Vercel)
 app.set('trust proxy', 1);
 
-// Connect to MongoDB (if you're using a database)
 connectDB();
 
-// Configure session with connect-mongo
+
 app.use(session({
     secret: 'StallMate', 
     resave: false, 
@@ -37,7 +35,7 @@ app.use(session({
     cookie: {
         maxAge: 60 * 60 * 1000, // 1 hour
         secure: false, // Ensure cookies are only sent over HTTPS
-        sameSite: 'lax', // Required for cross-site cookies on Vercel
+        sameSite: 'lax', 
         httpOnly: true // Protect against XSS
     }
 }));
@@ -48,7 +46,7 @@ app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Debug route
+
 app.get('/debug', (req, res) => {
     res.json({
         sessionId: req.sessionID,
@@ -57,7 +55,7 @@ app.get('/debug', (req, res) => {
         isAuthenticated: req.isAuthenticated()
     });
 });
-// Define routes
+
 app.use('/', homeRouter);
 app.use('/auth', authRouter);
 app.use('/dashboard/stallowner', isLoggedIn, setupProfileRouter);
@@ -68,7 +66,7 @@ app.use('/dashboard/customer', isLoggedIn, customerOrder);
 app.use('/dashboard/stallowner', isLoggedIn, ratingRouter);
 app.use('/dashboard/customer', isLoggedIn, favoriteStallRouter);
 
-// Start the server
+
 app.listen(3000, () => {
     console.log('Server is listening on port 3000');
 });

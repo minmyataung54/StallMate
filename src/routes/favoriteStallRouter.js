@@ -4,12 +4,11 @@ const isLoggedIn = require('../middleware/authMiddleware');
 const router = express.Router();
 const StallOwnerProfile = require('../models/StallOwner_profile');
 
-router.post('/:customerID/favorite/:stallownerID', isLoggedIn, async (req, res) => {
+router.put('/:customerID/favorite/:stallownerID', isLoggedIn, async (req, res) => {
     try {
         const customerID = req.user._id; 
         const stallownerID = req.params.stallownerID;
 
-        
         const existingFavorite = await Favorite.findOne({ customerID, stallownerID });
         if (existingFavorite) {
             return res.status(400).json({ error: 'Stall is already in the favorites list' });

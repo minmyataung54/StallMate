@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const isLoggedIn = require('../middleware/authMiddleWare.js');
+const isLoggedIn = require('../middleware/authMiddleware.js');
 
 // Stall Owner Dashboard Route
 router.get('/stallowner/:seller_id', isLoggedIn, (req, res) => {
