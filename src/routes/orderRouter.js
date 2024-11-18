@@ -40,6 +40,7 @@ router.put("/:seller_id/orders", isLoggedIn, async (req, res) => {
         price: menuItem.price,
         quantity: item.quantity,
         notes: item.notes,
+        imageUrl: menuItem.imageUrl,
       };
     });
 
