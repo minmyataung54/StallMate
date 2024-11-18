@@ -40,7 +40,7 @@ router.delete('/:customerID/favorite/:stallownerID', isLoggedIn, async (req, res
         res.status(500).json({ error: 'Failed to remove from favorites' });
     }
 });
-router.get('/:_id/favorites', isLoggedIn, async (req, res) => {
+router.get('/:_id/favorite', isLoggedIn, async (req, res) => {
     try {
         const customerID = req.user._id;
         const favorites = await Favorite.find({ customerID }).populate('stallownerID');
