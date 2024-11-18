@@ -46,8 +46,8 @@ router.put('/:customer_id/history/:seller_id/rate', isLoggedIn, async (req, res)
             return res.status(403).json({ error: 'You have already rated this restaurant' });
         }
 
-        
-        
+        console.log(stallOwnerProfile.restaurant.rating.average);
+
         stallOwnerProfile.restaurant.rating.number_of_reviews += 1;
 
         // Correct the average rating calculation
