@@ -20,8 +20,8 @@ const locationSchema = new mongoose.Schema({
 },{_id: false});
 
 const ratingSchema = new mongoose.Schema({
-    average: { type: Number, default: 0 },
-    number_of_reviews: { type: Number, default: 0 }
+    number_of_reviews: { type: Number, default: 0 } ,
+    average : { type: Number, default: 0 }
 }, { _id: false });
 
 const restaurantSchema = new mongoose.Schema({
@@ -31,7 +31,8 @@ const restaurantSchema = new mongoose.Schema({
     opening_hours : [openingHoursSchema],
     contact : contactSchema,
     rating : ratingSchema
-}, {_id: false});
+},
+     {_id: false});
 
 const stallOwnerProfileSchema = new mongoose.Schema({
     StallOwnerID: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
