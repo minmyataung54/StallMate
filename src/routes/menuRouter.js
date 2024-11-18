@@ -3,9 +3,11 @@ const multer = require('multer');
 const multerS3 = require('multer-s3');
 const s3Client = require('../config/s3Client');
 const { Menu, CATEGORIES } = require('../models/menuSchema');
+
 const isLoggedIn = require('../middleware/authMiddleware');
 const translate = require('../middleware/azure_translate');
 const Cart = require('../models/cartSchema');
+const StallOwnerProfile = require('../models/StallOwner_profile');
 
 const router = express.Router();
 
@@ -85,8 +87,11 @@ router.get('/:seller_id/menu', isLoggedIn, async (req, res) => {
                 categories: [] 
             });
         }
+        const stallOwnerProfile = await StallOwnerProfile.findOne({ StallOwnerID: req.params.seller_id });
+        if (!stallOwnerProfile) {
+            return res.status(404).json({ error: 'Stall owner profile not found' });
+        }
 
-        
         const usedCategories = [...new Set(menu.items.map(item => item.category))]; 
         const categorizedMenu = usedCategories.reduce((acc, category) => {
         
@@ -109,6 +114,9 @@ router.get('/:seller_id/menu', isLoggedIn, async (req, res) => {
 
         res.json({ 
             restaurant_id: menu.seller,
+            restaurant_name: stallOwnerProfile.restaurant.name,
+            restaurant_image: stallOwnerProfile.restaurant.photo,
+            rating: stallOwnerProfile.restaurant.rating || 0,
             categories: categorizedMenu 
         });
 
