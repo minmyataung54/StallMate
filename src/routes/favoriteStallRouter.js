@@ -6,16 +6,15 @@ const StallOwnerProfile = require('../models/StallOwner_profile');
 
 router.post('/:customerID/favorite/:stallownerID', isLoggedIn, async (req, res) => {
     try {
-        const customerID = req.user._id; // The authenticated customer's ID
+        const customerID = req.user._id; 
         const stallownerID = req.params.stallownerID;
 
-        // Check if the favorite entry already exists
+        
         const existingFavorite = await Favorite.findOne({ customerID, stallownerID });
         if (existingFavorite) {
             return res.status(400).json({ error: 'Stall is already in the favorites list' });
         }
 
-        // Create a new favorite entry
         const newFavorite = new Favorite({ customerID, stallownerID });
         await newFavorite.save();
 
@@ -30,7 +29,7 @@ router.delete('/:customerID/favorite/:stallownerID', isLoggedIn, async (req, res
         const customerID = req.user._id;
         const stallownerID = req.params.stallownerID;
 
-        // Find and remove the favorite entry
+        
         const removedFavorite = await Favorite.findOneAndDelete({ customerID, stallownerID });
         if (!removedFavorite) {
             return res.status(404).json({ error: 'Favorite not found' });
@@ -45,15 +44,11 @@ router.delete('/:customerID/favorite/:stallownerID', isLoggedIn, async (req, res
 router.get('/:_id/favorites', isLoggedIn, async (req, res) => {
     try {
         const customerID = req.user._id;
-
-        // Find all favorite entries for the customer
         const favorites = await Favorite.find({ customerID }).populate('stallownerID');
 
         if (!favorites || favorites.length === 0) {
             return res.json({ message: 'No favorite stalls found', favorites: [] });
         }
-
-        // Prepare the favorite stalls list with necessary details
         const favoriteStalls = await Promise.all(favorites.map(async (favorite) => {
             const stallOwnerProfile = await StallOwnerProfile.findOne({ StallOwnerID: favorite.stallownerID._id });
             if (stallOwnerProfile) {
