@@ -104,7 +104,7 @@ router.put("/:seller_id/orders/:order_id/completed",
       const orderId = req.params.order_id;
       console.log("Marking order as completed:", orderId);
 
-      // Find the order by ID and seller ID and update its status to 'completed'
+      
       const order = await Order.findOneAndUpdate(
         { _id: orderId, sellerId },
         { orderStatus: "completed" },
