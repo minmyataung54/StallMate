@@ -1,6 +1,6 @@
 const express = require('express');
 const StallOwnerProfile = require('../models/StallOwner_profile');
-const isLoggedIn = require('../middleware/authMiddleWare');
+const isLoggedIn = require('../middleware/authMiddleware');
 const router = express.Router();
 const multer = require('multer');
 const multerS3 = require('multer-s3');

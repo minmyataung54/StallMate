@@ -1,6 +1,6 @@
 const express = require('express');
 const Order = require('../models/orderSchema');
-const isLoggedIn = require('../middleware/authMiddleWare');
+const isLoggedIn = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.get('/:customer_ID/history', isLoggedIn, async (req, res) => {

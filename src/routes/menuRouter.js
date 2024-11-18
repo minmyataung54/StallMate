@@ -3,7 +3,7 @@ const multer = require('multer');
 const multerS3 = require('multer-s3');
 const s3Client = require('../config/s3Client');
 const { Menu, CATEGORIES } = require('../models/menuSchema');
-const isLoggedIn = require('../middleware/authMiddleWare');
+const isLoggedIn = require('../middleware/authMiddleware');
 const translate = require('../middleware/azure_translate');
 const Cart = require('../models/cartSchema');
 
