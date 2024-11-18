@@ -10,6 +10,7 @@ const menuRouter = require('./routes/menuRouter');
 const orderRouter = require('./routes/orderRouter');
 const customerOrder = require('./routes/customerOrderRouter');
 const setupProfileRouter = require('./routes/setupProfileRouter');
+const favoriteStallRouter = require('./routes/favoriteStallRouter');
 const isLoggedIn = require('./middleware/authMiddleware');
 const ratingRouter = require('./routes/ratingRouter');
 
@@ -65,6 +66,7 @@ app.use('/dashboard/stallowner', isLoggedIn, orderRouter);
 app.use('/dashboard/stallowner', isLoggedIn, menuRouter);
 app.use('/dashboard/customer', isLoggedIn, customerOrder);
 app.use('/dashboard/stallowner', isLoggedIn, ratingRouter);
+app.use('/dashboard/customer', isLoggedIn, favoriteStallRouter);
 
 // Start the server
 app.listen(3000, () => {
