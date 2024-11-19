@@ -46,16 +46,23 @@ router.put('/:customer_id/history/:seller_id/rate', isLoggedIn, async (req, res)
             return res.status(403).json({ error: 'You have already rated this restaurant' });
         }
 
-        console.log(stallOwnerProfile.restaurant.rating.average);
+        console.log('Current average:', stallOwnerProfile.restaurant.rating.average);  // Let's say it's 5 from first review
 
-        stallOwnerProfile.restaurant.rating.number_of_reviews += 1;
+// Calculate the previous total BEFORE incrementing number_of_reviews
+        const previousTotalRating = Number(stallOwnerProfile.restaurant.rating.average) * 
+                                (stallOwnerProfile.restaurant.rating.number_of_reviews);  // 5 * 1 = 5
 
-        
-        const previousTotalRating = Number( stallOwnerProfile.restaurant.rating.average )* stallOwnerProfile.restaurant.rating.number_of_reviews -1;
-        const newTotalRating = previousTotalRating + Number(rating);
-        console.log(newTotalRating);
-        console.log(stallOwnerProfile.restaurant.rating.number_of_reviews);
-        stallOwnerProfile.restaurant.rating.average = newTotalRating / stallOwnerProfile.restaurant.rating.number_of_reviews;
+        // Now increment the number of reviews
+        stallOwnerProfile.restaurant.rating.number_of_reviews += 1;  // Now becomes 2
+
+        // Add new rating
+        const newTotalRating = previousTotalRating + Number(rating);  // 5 + 5 = 10
+
+        console.log('New total:', newTotalRating);  // Should show 10
+        console.log('Number of reviews:', stallOwnerProfile.restaurant.rating.number_of_reviews);  // Should show 2
+
+        // Calculate new average
+        stallOwnerProfile.restaurant.rating.average = newTotalRating / stallOwnerProfile.restaurant.rating.number_of_reviews;  // 10 / 2 = 5
         
         stallOwnerProfile.ratings[customerId] = rating;
         await stallOwnerProfile.save();
