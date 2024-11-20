@@ -3,6 +3,7 @@ const moment = require('moment-timezone');
 
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
+    email: { type: String, required: true },
     googleID: { type: String, required: true, unique: true },
     menu: {
         type: mongoose.Schema.Types.ObjectId,

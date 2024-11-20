@@ -1,6 +1,8 @@
 const express = require("express");
 const Order = require("../models/orderSchema");
 const { Menu } = require("../models/menuSchema");
+const Stripe = require('stripe');
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const isLoggedIn = require("../middleware/authMiddleware");
 const router = express.Router();
 
@@ -43,7 +45,52 @@ router.put("/:seller_id/orders", isLoggedIn, async (req, res) => {
         imageUrl: menuItem.imageUrl,
       };
     });
+   
+      if (paymentMethod === "card") {
+        const paymentMethodId = req.body.paymentMethodId || "pm_card_visa"; 
+    
+        if (!paymentMethodId) {
+            return res.status(400).json({ error: "Payment method ID is required for card payments" });
+        }
+      
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: totalAmount * 100, 
+        currency: "thb",
+        customer: req.user.stripeCustomerId, 
+        payment_method: paymentMethodId, 
+        off_session: true, 
+        confirm: true, 
+      });
 
+      
+      if (paymentIntent.status === "succeeded") {
+        
+        const newOrder = new Order({
+          customerId,
+          sellerId,
+          items: orderItems,
+          totalAmount,
+          paymentMethod,
+          tableNumber,
+        });
+
+        await newOrder.save();
+
+        return res.status(201).json({
+          message: `Order placed successfully. An amount of ${totalAmount} THB has been deducted from your card.`,
+          order: newOrder,
+          clientSecret: paymentIntent.client_secret,
+        });
+      } else {
+        
+        return res.status(400).json({
+          error: "Payment failed. Please try again or use a different payment method.",
+          paymentStatus: paymentIntent.status,
+        });
+      }
+    }
+
+    
     const newOrder = new Order({
       customerId,
       sellerId,
@@ -55,9 +102,7 @@ router.put("/:seller_id/orders", isLoggedIn, async (req, res) => {
 
     await newOrder.save();
 
-    res
-      .status(201)
-      .json({ message: "Order placed successfully", order: newOrder });
+    res.status(201).json({ message: "Order placed successfully", order: newOrder });
   } catch (error) {
     console.error("Error placing order:", error);
     res.status(500).json({ error: "Failed to place order" });
