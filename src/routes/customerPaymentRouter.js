@@ -50,7 +50,8 @@ router.put("/:customer_id/add-card", isLoggedIn, async (req, res) => {
         if (orderDetails) {
             return res.status(200).json({
                 message: "Card added successfully. You can now proceed with your order.",
-                redirectUrl: `http://localhost:3000/dashboard/stallowner/${orderDetails.sellerId}/orders`,
+                // redirectUrl: `http://localhost:3000/dashboard/stallowner/${orderDetails.sellerId}/orders`,
+                redirectUrl: `http://ec2-13-215-252-79.ap-southeast-1.compute.amazonaws.com:3000/dashboard/customer/${customerId}/orders`,
                 paymentMethodId,
                 orderDetails,
             });
@@ -58,7 +59,7 @@ router.put("/:customer_id/add-card", isLoggedIn, async (req, res) => {
 
         res.status(200).json({
             message: "Card added successfully.",
-            redirectUrl: `http://localhost:3000/dashboard/customer/${customerId}`,
+            redirectUrl: `http://ec2-13-215-252-79.ap-southeast-1.compute.amazonaws.com:3000/dashboard/customer/${customerId}`,
         });
     } catch (error) {
         console.error("Error adding card:", error);
