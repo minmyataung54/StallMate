@@ -172,16 +172,16 @@ router.get("/:seller_id/orders/pending", isLoggedIn, async (req, res) => {
 
     console.log("Fetching orders for seller ID:", sellerId);
 
-    const upcomingOrders = await Order.find({
+    const pendingOrders = await Order.find({
       sellerId,
       orderStatus: "pending",
     }).sort({ createdAt: -1 });
 
-    if (!upcomingOrders || upcomingOrders.length === 0) {
-      return res.json({ message: "No completed orders found", orders: [] });
+    if (!pendingOrders || pendingOrders.length === 0) {
+      return res.json({ message: "No pending orders found", orders: [] });
     }
 
-    const ordersList = upcomingOrders.map((order) => ({
+    const ordersList = pendingOrders.map((order) => ({
       orderId: order._id,
       customerId: order.customerId,
       items: order.items,
@@ -191,12 +191,12 @@ router.get("/:seller_id/orders/pending", isLoggedIn, async (req, res) => {
     }));
 
     res.json({
-      message: "Completed orders fetched successfully",
+      message: "Pending orders fetched successfully",
       orders: ordersList,
     });
   } catch (error) {
-    console.error("Error fetching completed orders:", error);
-    res.status(500).json({ error: "Failed to fetch completed orders" });
+    console.error("Error fetching pending orders:", error);
+    res.status(500).json({ error: "Failed to fetch pending orders" });
   }
 });
 module.exports = router;
