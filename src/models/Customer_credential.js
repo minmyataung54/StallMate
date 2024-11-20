@@ -7,7 +7,7 @@ const customerSchema = new mongoose.Schema({
     googleID: {type: String, required: true, unique: true},
     email: {type: String, required: true},
     stripeCustomerId: { type: String },
-    
+
     createdAt: { 
         type: Date, 
         default: () => moment().tz('Asia/Bangkok').toDate()
