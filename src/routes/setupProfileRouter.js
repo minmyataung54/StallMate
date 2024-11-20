@@ -89,14 +89,24 @@ router.post('/:seller_id/profile', isLoggedIn, upload.fields([{ name: 'profilePh
 
 router.get('/:seller_id/profile', async (req, res) => {
     try {
-        const profile = await StallOwnerProfile.findOne({ StallOwnerID: req.params.seller_id });
-        if (!profile) {
-            return res.status(200).json({ message: 'Profile not found' });
+        
+        if (!mongoose.Types.ObjectId.isValid(req.params.seller_id)) {
+            return res.status(400).json({ error: 'Invalid seller ID format.' });
         }
-        res.json({ profile });
+
+        
+        const profile = await StallOwnerProfile.findOne({ StallOwnerID: req.params.seller_id });
+
+        // Handle profile not found
+        if (!profile) {
+            return res.status(404).json({ error: 'Profile not found.' });
+        }
+
+        // Return the profile
+        res.status(200).json({ profile });
     } catch (error) {
         console.error('Error fetching profile:', error);
-        res.status(500).json({ error: 'Failed to fetch profile' });
+        res.status(500).json({ error: 'Failed to fetch profile.' });
     }
 });
 
