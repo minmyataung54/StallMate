@@ -90,11 +90,21 @@ router.post('/:seller_id/profile', isLoggedIn, upload.fields([{ name: 'profilePh
 
 router.get('/:seller_id/profile', async (req, res) => {
     try {
-        console.log('Searching for profile with seller ID:', req.params.seller_id);
+        const sellerId = req.params.seller_id;
+        
+        
+        if (!sellerId || !/^[0-9a-fA-F]{24}$/.test(sellerId)) {
+            return res.status(400).json({ 
+                status: 'not_setup',
+                message: 'Please set up your profile first.'
+            });
+        }
+        // console.log('Searching for profile with seller ID:', req.params.seller_id);
         if (!mongoose.Types.ObjectId.isValid(req.params.seller_id)) {
             return res.status(400).json({ error: 'Invalid seller ID format.' });
+            
         }
-
+        
         
         const profile = await StallOwnerProfile.findOne({ StallOwnerID: req.params.seller_id });
 
