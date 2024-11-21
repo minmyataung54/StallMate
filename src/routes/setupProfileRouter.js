@@ -29,7 +29,7 @@ router.put('/:seller_id/profile', isLoggedIn, upload.fields([{ name: 'profilePho
         const restaurantPhotoUrl = req.files['restaurantPhoto'] ? req.files['restaurantPhoto'][0].location : null;
 
         const newProfile = new StallOwnerProfile({
-            StallOwnerID: req.user._id,
+            StallOwnerID: req.params.seller_id,
             owner_profile: {
                 full_name: fullName,
                 profile_photo: profilePhotoUrl,
@@ -89,7 +89,7 @@ router.post('/:seller_id/profile', isLoggedIn, upload.fields([{ name: 'profilePh
 
 router.get('/:seller_id/profile', async (req, res) => {
     try {
-        
+        console.log('Searching for profile with seller ID:', req.params.seller_id);
         if (!mongoose.Types.ObjectId.isValid(req.params.seller_id)) {
             return res.status(400).json({ error: 'Invalid seller ID format.' });
         }
