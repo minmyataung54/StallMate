@@ -2,7 +2,7 @@ const express = require("express");
 const Stripe = require("stripe");
 const Order = require("../models/orderSchema");
 const { Menu } = require("../models/menuSchema");
-const Customer = require("../models/Customer_credential");
+// const Customer = require("../models/Customer_credential");
 const isLoggedIn = require("../middleware/authMiddleware");
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -11,7 +11,7 @@ router.put("/:seller_id/orders", isLoggedIn, async (req, res) => {
   try {
     const customerId = req.user._id;
     const sellerId = req.params.seller_id;
-    const { items, tableNumber, paymentMethod } = req.body;
+    const { items, tableNumber, paymentMethod } = req.body;   //to fix this part to combine with frontend & backend
 
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: "No items provided in the order." });
@@ -23,7 +23,7 @@ router.put("/:seller_id/orders", isLoggedIn, async (req, res) => {
     }
 
     let totalAmount = 0;
-    const orderItems = items.map((item) => {
+    const lineItems = items.map((item) => {
       const menuItem = menu.items.find(
         (menuItem) => menuItem._id.toString() === item.menuId
       );
@@ -31,62 +31,81 @@ router.put("/:seller_id/orders", isLoggedIn, async (req, res) => {
         throw new Error(`Menu item with ID ${item.menuId} not found for this seller.`);
       }
       const itemTotal = menuItem.price * item.quantity;
-      totalAmount += itemTotal;
-      return {
-        menuId: menuItem._id,
-        name: menuItem.name,
-        name_en: menuItem.name_en,
-        price: menuItem.price,
-        quantity: item.quantity,
-        notes: item.notes,
-        imageUrl: menuItem.imageUrl,
-      };
-    });
+      totalAmount += itemTotal * 100;
+    //   return {
+    //     menuId: menuItem._id,
+    //     name: menuItem.name,
+    //     name_en: menuItem.name_en,
+    //     price: menuItem.price,
+    //     quantity: item.quantity,
+    //     notes: item.notes,
+    //     imageUrl: menuItem.imageUrl,
+    //   };
+    // });
+    return {
+      price_data: {
+        currency: "thb",
+        product_data: { name: menuItem.name },
+        unit_amount: menuItem.price * 100,
+      },
+      quantity: item.quantity,
+    };
+  });
 
-    const user = await Customer.findById(customerId);
+    // const user = await Customer.findById(customerId);
 
-    if (!user || !user.stripeCustomerId) {
-      // Store the order details temporarily in the session
-      req.session.orderDetails = {
-        items,
-        totalAmount,
-        tableNumber,
-        paymentMethod,
-        sellerId,
-      };
+    // if (!user || !user.stripeCustomerId) {
+    //   // Store the order details temporarily in the session
+    //   req.session.orderDetails = {
+    //     items,
+    //     totalAmount,
+    //     tableNumber,
+    //     paymentMethod,
+    //     sellerId,
+    //   };
 
       
-      return res.status(302).json({
-        error: "Stripe customer ID not found. Please add your card details.",
-        redirectUrl: `/dashboard/customer/${customerId}/add-card`,
-      });
-    }
+    //   return res.status(302).json({
+    //     error: "Stripe customer ID not found. Please add your card details.",
+    //     redirectUrl: `/dashboard/customer/${customerId}/add-card`,
+    //   });
+    // }
 
     
     if (paymentMethod === "card") {
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: totalAmount * 100, 
-        currency: "thb",
-        customer: user.stripeCustomerId,
-        payment_method: req.body.paymentMethodId || "pm_card_visa" , 
-        off_session: true,
-        confirm: true,
+      const paymentIntent = await stripe.checkout.sessions.create({
+      //   amount: totalAmount * 100, 
+      //   currency: "thb",
+      //   customer: user.stripeCustomerId,
+      //   payment_method: req.body.paymentMethodId || "pm_card_visa" , 
+      //   off_session: true,
+      //   confirm: true,
+      // });
+      payment_method_types: ["card"],
+        line_items: lineItems,
+        mode: "payment",
+        success_url: `http://localhost:5173/success?order_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `http://localhost:5173/cancel`,
       });
 
-      if (paymentIntent.status !== "succeeded") {
-        return res.status(400).json({
-          error: "Payment failed. Please try again or use a different payment method.",
-          paymentStatus: paymentIntent.status,
-        });
-      }
-    }
+    //   if (paymentIntent.status !== "succeeded") {
+    //     return res.status(400).json({
+    //       error: "Payment failed. Please try again or use a different payment method.",
+    //       paymentStatus: paymentIntent.status,
+    //     });
+    //   }
+    // }
+    return res.status(200).json({
+      message: "Payment session created successfully.",
+      sessionId: session.id,
+      });
+    } 
 
-    
     const newOrder = new Order({
       customerId,
       sellerId,
-      items: orderItems,
-      totalAmount,
+      items: lineItems,
+      totalAmount: totalAmount / 100,
       paymentMethod,
       tableNumber,
     });
@@ -94,7 +113,7 @@ router.put("/:seller_id/orders", isLoggedIn, async (req, res) => {
     await newOrder.save();
 
     res.status(201).json({
-      message: `Order placed successfully. An amount of ${totalAmount} THB has been deducted from your card.`,
+      message: 'Order placed successfully.',
       order: newOrder,
     });
   } catch (error) {
