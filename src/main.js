@@ -14,6 +14,7 @@ const favoriteStallRouter = require('./routes/favoriteStallRouter');
 const isLoggedIn = require('./middleware/authMiddleware');
 const ratingRouter = require('./routes/ratingRouter');
 const billingCardRouter = require('./routes/customerPaymentRouter');
+const walletHistory = require('./routes/walletHistory');
 
 require('./config/GoogleAuth'); 
 
@@ -67,6 +68,7 @@ app.use('/dashboard/customer', isLoggedIn, customerOrder);
 app.use('/dashboard/customer', isLoggedIn, ratingRouter);
 app.use('/dashboard/customer', isLoggedIn, favoriteStallRouter);
 app.use('/dashboard/customer', isLoggedIn, billingCardRouter);
+app.use('/dashboard/stallowner', isLoggedIn, walletHistory);
 
 
 app.listen(3000, () => {
