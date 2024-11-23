@@ -3,7 +3,8 @@ const Stripe = require("stripe");
 const Order = require("../models/orderSchema");
 const { Menu } = require("../models/menuSchema");
 const isLoggedIn = require("../middleware/authMiddleware");
-const updateTodaySales = require("../utils/todaySalesUpdater"); // Import the utility
+const updateTodaySales = require("../utils/todaySalesUpdater"); 
+const translate = require("../middleware/azure_translate");
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -23,42 +24,43 @@ router.put("/:seller_id/orders", isLoggedIn, async (req, res) => {
     }
 
     let totalAmount = 0;
-    const orderItems = items.map((item) => {
-      const menuItem = menu.items.find(
-        (menuItem) => menuItem._id.toString() === item.menuId
-      );
-      if (!menuItem) {
-        throw new Error(`Menu item with ID ${item.menuId} not found for this seller.`);
-      }
-      const itemTotal = menuItem.price * item.quantity;
-      totalAmount += itemTotal;
-      return {
-        menuId: menuItem._id,
-        name: menuItem.name,
-        name_en: menuItem.name_en,
-        price: menuItem.price,
-        quantity: item.quantity,
-        notes: item.notes,
-        imageUrl: menuItem.imageUrl,
-      };
-    });
+    const orderItems = await Promise.all(
+      items.map(async (item) => {
+        const menuItem = menu.items.find(
+          (menuItem) => menuItem._id.toString() === item.menuId
+        );
+        if (!menuItem) {
+          throw new Error(`Menu item with ID ${item.menuId} not found for this seller.`);
+        }
+        const itemTotal = menuItem.price * item.quantity;
+        totalAmount += itemTotal;
 
-    // Handle card payment logic (if applicable)
-    if (paymentMethod === "card") {
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: totalAmount * 100,
-        currency: "thb",
-        payment_method: req.body.paymentMethodId,
-        confirm: true,
-      });
+        // Translate notes
+        let translatedNotesEn = item.notes;
+        let translatedNotesTh = item.notes;
+        try {
+          const translationResult = await translate(item.notes);
+          if (translationResult.from === "th") {
+            translatedNotesEn = translationResult.translatedText;
+          } else {
+            translatedNotesTh = translationResult.translatedText;
+          }
+        } catch (translationError) {
+          console.error("Translation failed:", translationError.message);
+        }
 
-      if (paymentIntent.status !== "succeeded") {
-        return res.status(400).json({
-          error: "Payment failed. Please try again or use a different payment method.",
-          paymentStatus: paymentIntent.status,
-        });
-      }
-    }
+        return {
+          menuId: menuItem._id,
+          name: menuItem.name,
+          name_en: menuItem.name_en,
+          price: menuItem.price,
+          quantity: item.quantity,
+          notes_en: translatedNotesEn,
+          notes_th: translatedNotesTh,
+          imageUrl: menuItem.imageUrl,
+        };
+      })
+    );
 
     // Create the new order
     const newOrder = new Order({

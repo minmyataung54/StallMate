@@ -13,10 +13,11 @@ const orderItemSchema = new mongoose.Schema({
     price: { type: Number, required: true }, 
     quantity: { type: Number, required: true, min: 1 }, 
     imageUrl: { type: String, required: true },
-    notes: { type: String } // Any additional notes for the item
+    notes_en: { type: String },
+    notes_th: { type: String }, 
 }, { _id: false });
 
-// Define the Order Schema
+
 const orderSchema = new mongoose.Schema({
     customerId: { 
         type: mongoose.Schema.Types.ObjectId, 

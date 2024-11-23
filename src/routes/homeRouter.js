@@ -33,7 +33,8 @@ router.get('/dashboard/customer/:customer_id', isLoggedIn, (req, res) => {
     if (req.user) {
         res.send(`Hello customer ${req.user.username}, welcome to StallMate!! <br>
             <a href="/dashboard/customer/${req.params.customer_id}/history">Go to order history</a> <br>
-            <a href="/dashboard/customer/${req.params.customer_id}/favorite">Go to favorite stalls</a>
+            <a href="/dashboard/customer/${req.params.customer_id}/favorite">Go to favorite stalls</a> <br>
+            <a href="/dashboard/customer/${req.params.customer_id}/profile">Profile link</a>
             `);
     } else {
         res.redirect('/auth/customer/google');
