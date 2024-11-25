@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useOwnerAuth } from "../utilities/OwnerAuthContext";
 import axios from "axios";
 import './CreateStallProfile.css'
@@ -45,10 +45,19 @@ const CreateStallProfile = () => {
     };
 
     const handleAddOpeningHours = () => {
-        setProfile((prevState) => ({
-            ...prevState,
-            openingHours: [...prevState.openingHours, { weekday: "", open_time: "", close_time: "" }],
-        }));
+        setProfile((prev) => {
+            if (prev.openingHours.length >= 7) {
+                alert("You can't add more than 7 days!");
+                return prev;
+            }
+            return {
+                ...prev,
+                openingHours: [
+                    ...prev.openingHours,
+                    { weekday: "", open_time: "", close_time: "" },
+                ],
+            };
+        });
     };
 
     const handleOpeningHoursChange = (index, key, value) => {

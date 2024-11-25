@@ -4,8 +4,6 @@ import { useOwnerAuth } from '../utilities/OwnerAuthContext';
 import { Dropdown } from 'react-bootstrap';
 import axios from 'axios';
 
-import ShopLogo from "../assets/shoplogo.png"
-import RiceIMG from '../assets/rice.png'
 import LangICON from '../assets/lang.png'
 import EditLogoSVG from '../assets/edit.svg'
 import ArrowSVG from '../assets/arrow-left.svg'
@@ -17,52 +15,51 @@ import StallQRCodeIMG from '../assets/stallqr.png';
 import CategorySVG from '../assets/catego.svg';
 import ShopSVG from '../assets/shop.svg';
 import LocationSVG from '../assets/location.svg';
-
+import Loading from "../Loading";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 const BACK_END_BASE_URL = import.meta.env.VITE_API_BACK_END_BASE_URL;
 
-const OwnerStallMenu = () => {
-	
-	const { authData } = useOwnerAuth();
-	const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 	const navigate = useNavigate();
-	const [loading, setLoading] = useState(true);
-	const [restaurants, setRestaurants] = useState([]);
-	const [selectedLanguage, setSelectedLanguage] = useState("English");
-	const [selectedMenu, setSelectedMenu] = useState(null);
-	const [isResVisible, setIsResVisible] = useState(false);
-	const [isQrVisible, setIsQrVisible] = useState(false);
-	const [addMenu, setAddMenu] = useState(false);
-	const [selectedAddMenu, setSelectedAddMenu] = useState({ imageUrl: null, name: "",description: "", price: 0, category: "" });
-	const [searchVisible, setSearchVisible] = useState(false);
-	const [query, setQuery] = useState("");
-	const [editRes, setEditRes] = useState(
+	const { authData } = useOwnerAuth();
+	const [ selectedRestaurant, setSelectedRestaurant ] = useState(null);
+	
+	const [ loading, setLoading ] = useState(true);
+	const [ restaurants, setRestaurants ] = useState([]);
+	const [ selectedLanguage, setSelectedLanguage ] = useState("English");
+	const [ selectedMenu, setSelectedMenu ] = useState(null);
+	const [ isResVisible, setIsResVisible ] = useState(false);
+	const [ isQrVisible, setIsQrVisible ] = useState(false);
+	const [ addMenu, setAddMenu ] = useState(false);
+	const [ selectedAddMenu, setSelectedAddMenu ] = useState({ imageUrl: null, name: "",description: "", price: 0, category: "" });
+	const [ searchVisible, setSearchVisible ] = useState(false);
+	const [ query, setQuery ] = useState("");
+	const [ editRes, setEditRes ] = useState(
 		{
-			restaurant_id: "12345",
-			restaurant_name: "Delicious Bites",
-			restaurant_image: ShopLogo,
-			opening_hours: [
-			  { weekday: "Monday", open_time: "09:00", close_time: "21:00" },
-			  { weekday: "Tuesday", open_time: "09:00", close_time: "21:00" },
-			  { weekday: "Wednesday", open_time: "09:00", close_time: "21:00" },
-			  { weekday: "Thursday", open_time: "09:00", close_time: "21:00" },
-			  { weekday: "Friday", open_time: "09:00", close_time: "21:00" },
-			  { weekday: "Saturday", open_time: "10:00", close_time: "17:00" },
-			  { weekday: "Sunday", open_time: "10:00", close_time: "17:00" },
-			],
+			restaurant_name: stallProfile.restaurant.name,
+			restaurant_image: stallProfile.restaurant.photo,
+			opening_hours: stallProfile.restaurant.opening_hours.map((day) => ({
+				weekday: day.weekday,
+				open_time: day.open_time,
+				close_time: day.close_time,
+			})),
 			location: {
-			  address: "1234 Food Street",
-			  city: "Bangkok",
-			  state: "Bangkok"
+				address: stallProfile.restaurant.location.address,
+				city: stallProfile.restaurant.location.city,
+				state: stallProfile.restaurant.location.state
 			},
 			contact: {
-			  phone: "0000000000",
-			  email: "food@gmail.com"
+				phone: stallProfile.restaurant.contact.phone,
+				email: stallProfile.restaurant.contact.email
 			}
-		  }
-		);
+		}
+	);
+
+	console.log(stallProfile);
+	console.log(editRes.opening_hours);
+
 	const [selectedDay, setSelectedDay] = useState("Monday");
 
 	const handleMenuCreate = async (e) => {
@@ -89,7 +86,10 @@ const OwnerStallMenu = () => {
 			const response = await axios.put(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/menu`, 
 				formData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
 				console.log('Menu created successfully:', response.data);
+				setSelectedAddMenu({ imageUrl: null, name: "",description: "", price: 0, category: "" });
+				setAddMenu(false);
 				alert('Menu created successfully!');
+				
 		} catch (error) {
 			console.error('Error creating menu:', error.response?.data || error.message);
 			alert('Failed to create menu. Please check the details and try again.');
@@ -120,78 +120,10 @@ const OwnerStallMenu = () => {
         fetchMenu();
     }, []);
 
-
-
-
-	/*useEffect(() => {
-		const data = [
-			{
-				"restaurant_id": "12345",
-				"restaurant_name": "Delicious Bites",
-				"restaurant_image": ShopLogo,
-				"rating": 4.5,
-				"qr_code": "https://imageawsmenubucket.s3.ap-southeast-1.amazonaws.com/qrcodes/6723b36780c1b29068338c17-6918f546-fd75-4a5a-ac5f-f045c27e6411.png",
-				"categories": {
-					"Main Dish": [
-						{
-							"_id": "abcd1234",
-							"name": "ข้าวผัดกุ้ง",
-							"name_en": "Fried Rice with Shrimp",
-							"description": "ข้าวผัดหอมๆ กับกุ้งสด",
-							"description_en": "Fragrant fried rice with fresh shrimp.",
-							"price": 80,
-							"imageUrl": RiceIMG
-						},
-						{
-							"_id": "efgh5678",
-							"name": "ผัดไทย",
-							"name_en": "Pad Thai",
-							"description": "ผัดไทยเส้นเล็กใส่ไข่",
-							"description_en": "Stir-fried rice noodles with egg.",
-							"price": 60,
-							"imageUrl": RiceIMG
-						}
-					],
-					"Drinks": [
-						{
-							"_id": "ijkl9101",
-							"name": "ชาไทย",
-							"name_en": "Thai Tea",
-							"description": "ชาไทยสูตรต้นตำรับ",
-							"description_en": "Authentic Thai tea.",
-							"price": 25,
-							"imageUrl": RiceIMG
-						},
-						{
-							"_id": "mnop1121",
-							"name": "น้ำมะนาว",
-							"name_en": "Lemonade",
-							"description": "น้ำมะนาวสด ชื่นใจ",
-							"description_en": "Refreshing fresh lemonade.",
-							"price": 30,
-							"imageUrl": RiceIMG
-						}
-					]
-				},
-			}
-		];
-
-		setTimeout(() => {
-			setRestaurants(data);
-			const foundRestaurant = data.find(
-				(restaurant) => restaurant.restaurant_name === "Delicious Bites"
-			);
-			if (foundRestaurant) {
-				setSelectedRestaurant(foundRestaurant);
-			}
-			setLoading(false);
-		}, 300);
-	}, []);*/
-
 	
 
 	if (loading) {
-		return <div className="text-center text white">Loading...</div>;
+		return <Loading />;
 	}
 
 	const handleFoodClick = (item) => {
@@ -230,8 +162,6 @@ const OwnerStallMenu = () => {
 			setSelectedLanguage("Thai");
 		}
 	};
-	//console.log(selectedMenu);
-
 
 	const handleFormChange = (e) => {
 		setSelectedMenu(prev => ({
@@ -273,57 +203,88 @@ const OwnerStallMenu = () => {
 			}));
 	};
 
-
-	const handleImageClick = () => {
-		document.getElementById('fileInput').click();
-	};
 	const handleAddImageClick = () => {
 		document.getElementById('fileInputAdd').click();
 	};
 
+	const handleImageClick = () => {
+		document.getElementById('fileInput').click();
+	};
+	
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		
-		if (!selectedMenu.imageUrl) {
-			alert('Please select an image file.');
-			return;
-		}
 
-		console.log(selectedMenu.imageUrl)
+
+		console.log("selectedMenu : ",selectedMenu);
 
 		const formData = new FormData();
 		formData.append('image', selectedMenu.imageUrl);
 		formData.append('name', selectedMenu.name);
 		formData.append('description', selectedMenu.description);
 		formData.append('price', selectedMenu.price);
-		formData.append('category', selectedMenu.category);
 
 		console.log('BACK_END_BASE_URL:', BACK_END_BASE_URL);
 		console.log('authData?.ownerData.ownerID', authData?.ownerData.ownerID);
+
+		console.log("Formdata : ", formData);
 
 		try {
 			const response = await axios.post(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/menu/${selectedMenu._id}`, 
 				formData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
 				console.log('Menu edited successfully:', response.data);
 				alert('Menu edited successfully!');
+				setSelectedMenu(null);
 		} catch (error) {
 			console.error('Error editing menu:', error.response?.data || error.message);
-			alert('Failed to edit menu. Please check the details and try again.');
+			//alert('Failed to edit menu. Please check the details and try again.');
 		}
 	};
+
+	const handleDeleteMenu = async () =>{
+		try {
+			const response = await axios.delete(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/menu/${selectedMenu._id}`
+				, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
+				console.log('Menu deleted successfully:', response.data);
+				alert('Menu deleted successfully!');
+				setSelectedMenu(null);
+		} catch (error) {
+			console.error('Error deleting menu:', error.response?.data || error.message);
+			alert('Failed to delete menu. Please check the details and try again.');
+		}
+	}
 
 
 	const handleResSubmit = async (e) => {
 		e.preventDefault();
 
+		const filteredDays = editRes.opening_hours.filter(
+            (day) => day.open_time && day.close_time
+        );
+
 		console.log(editRes)
+		console.log('Type of editRes.location:', typeof(editRes.location));
+		console.log('Type of editRes.opening_hours:', typeof(editRes.opening_hours));
+		console.log('Type of editRes.contact:', typeof(editRes.contact));
+		console.log('editRes.location:', editRes.location);
+		console.log('editRes.opening_hours:', editRes.opening_hours);
+		console.log('editRes.contact:', editRes.contact);
 
 		const formData = new FormData();
 		formData.append('restaurantPhoto', editRes.restaurant_image);
 		formData.append('restaurantName', editRes.restaurant_name);
-		formData.append('location', JSON.stringify(editRes.location));
-		formData.append('openingHours', JSON.stringify(editRes.opening_hours));
-		formData.append('contact', JSON.stringify(editRes.contact));
+		formData.append('location[address]', editRes.location.address);
+		formData.append('location[city]', editRes.location.city);
+		formData.append('location[state]', editRes.location.state);
+		//formData.append('openingHours', JSON.stringify(editRes.opening_hours));
+		filteredDays.forEach((day, index) => {
+			formData.append(`openingHours[${index}][weekday]`, day.weekday);
+			formData.append(`openingHours[${index}][open_time]`, day.open_time);
+			formData.append(`openingHours[${index}][close_time]`, day.close_time);
+		});
+		//formData.append('contact', editRes.contact);
+
+		console.log('formData:', formData);
 
 		console.log('BACK_END_BASE_URL:', BACK_END_BASE_URL);
 		console.log('authData?.ownerData.ownerID', authData?.ownerData.ownerID);
@@ -333,6 +294,7 @@ const OwnerStallMenu = () => {
 				formData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
 				console.log('edit restaurant successfully:', response.data);
 				alert('edit restaurant info successfully!');
+				setIsResVisible(false);
 		} catch (error) {
 			console.error('Error creating menu:', error.response?.data || error.message);
 			alert('Failed to edit restaurant info. Please check the details and try again.');
@@ -356,45 +318,71 @@ const OwnerStallMenu = () => {
 		const day = dataset.day;
 	
 		setEditRes((prev) => {
-			
 			if (day) {
-				const updatedHours = prev.opening_hours.map((entry) =>
-					entry.weekday === day ? { ...entry, [name]: value } : entry
-				);
+				const dayExists = prev.opening_hours.some((entry) => entry.weekday === day);
+				const updatedHours = dayExists
+					? prev.opening_hours.map((entry) =>
+						  entry.weekday === day ? { ...entry, [name]: value } : entry
+					  )
+					: [
+						  ...prev.opening_hours,
+						  { weekday: day, open_time: "", close_time: "", [name]: value },
+					  ];
 				return { ...prev, opening_hours: updatedHours };
 			}
-	
-			
-			if (name === 'address' || name === 'city' || name === 'state') {
+
+			if (["address", "city", "state"].includes(name)) {
 				return {
 					...prev,
 					location: {
 						...prev.location,
-						[name]: value
-					}
+						[name]: value,
+					},
 				};
 			}
-	
-		
-			if (name === 'phone' || name === 'email') {
+
+			if (["phone", "email"].includes(name)) {
 				return {
 					...prev,
 					contact: {
 						...prev.contact,
-						[name]: value
-					}
+						[name]: value,
+					},
 				};
 			}
-	
-			
+
 			return { ...prev, [name]: value };
 		});
 	};
 	
+	const handleRemoveOpeningHours = (index) => {
+        setEditRes((prev) => ({
+            ...prev,
+            openinghours: prev.opening_hours.filter((_, i) => i !== index),
+        }));
+    };
 
-
-
-
+	const handleAddOpeningHours = () => {
+		setEditRes((prev) => {
+			if (prev.opening_hours.length >= 7) {
+				alert("You can't add more than 7 days!");
+				return prev;
+			}
+	
+			const usedDays = prev.opening_hours.map((entry) => entry.weekday);
+			const availableDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].filter(
+				(day) => !usedDays.includes(day)
+			);
+	
+			return {
+				...prev,
+				opening_hours: [
+					...prev.opening_hours,
+					{ weekday: availableDays[0] || "", open_time: "", close_time: "" }, // Default to the first unused day
+				],
+			};
+		});
+	};
 
 
 	return (
@@ -409,7 +397,7 @@ const OwnerStallMenu = () => {
 							</div>
 						</div>
 
-						<div className='row' style={{ marginTop: "20vw", display: "flex", flexDirection: "column", alignItems: "center" }}>
+						<div className='row' style={{ marginTop: "35vw", display: "flex", flexDirection: "column", alignItems: "center" }}>
 							<img src={selectedMenu.imageUrl} alt="" style={{ width: "60vw" }} />
 							<form onSubmit={handleSubmit} className='d-flex flex-column justify-content-center align-items-center' style={{ position: "relative" }}>
 								<img
@@ -460,10 +448,12 @@ const OwnerStallMenu = () => {
 									/>
 								</div>
 
-
-								<div className='d-flex justify-content-center align-items-center fixed-bottom' style={{ marginBottom: "7vw" }}>
-									<button type='submit' className='d-flex justify-content-center align-items-center text-white' style={{ width: "95vw", height: "12vw", background: "#2B964F", fontSize: "3.5vw", borderRadius: "4vw" }}>
+								<div className='d-flex justify-content-around align-items-center fixed-bottom' style={{ marginBottom: "7vw" }}>
+									<button type='submit' className='d-flex justify-content-center align-items-center text-white' style={{ width: "40vw", height: "12vw", background: "#2B964F", fontSize: "3.5vw", borderRadius: "4vw" }}>
 										Finished
+									</button>
+									<button onClick={handleDeleteMenu} className='d-flex justify-content-center align-items-center text-white' style={{ width: "40vw", height: "12vw", background: "#dd7973", fontSize: "3.5vw", borderRadius: "4vw" }}>
+										Delete this menu
 									</button>
 								</div>
 							</form>
@@ -548,119 +538,84 @@ const OwnerStallMenu = () => {
 										/>
 									</div>
 
-									<div className="input-group d-flex justify-content-center align-items-center" style={{ marginBottom: "3vw" }}>
-										<span
-											className="d-flex justify-content-center align-items-center"
-											style={{
-												background: "#01040F",
-												border: "none",
-												height: "15vw",
-												width: "15vw",
-												marginTop: "-1vw",
-												borderRadius: "2vw 0 0 2vw",
-											}}
-										>
-											<p className="text-white" style={{ fontSize: "3.5vw", margin: 0 }}>
-												Day
-											</p>
-										</span>
-										<select
-											className="text-white"
-											value={selectedDay}
-											onChange={(e) => setSelectedDay(e.target.value)}
-											style={{
-												width: "75vw",
-												height: "15vw",
-												marginBottom: "1vw",
-												background: "#01040F",
-												border: "none",
-												fontSize: "4vw",
-												borderRadius: "0 2vw 2vw 0",
-											}}
-										>
-											{editRes.opening_hours.map((entry) => (
-												<option key={entry.weekday} value={entry.weekday}>
-													{entry.weekday}
-												</option>
-											))}
-										</select>
-									</div>
+									<div className="openHour-container">
+										{["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((dayName) => {
+											const dayData = editRes.opening_hours.find((entry) => entry.weekday === dayName) || {
+											weekday: dayName,
+											open_time: "",
+											close_time: "",
+											};
 
-
-									<div className="input-group d-flex justify-content-center align-items-center" style={{ marginBottom: "3vw" }}>
-										<span
-											className="d-flex justify-content-center align-items-center"
-											style={{
-												background: "#01040F",
-												border: "none",
-												height: "15vw",
-												width: "15vw",
-												marginTop: "-1vw",
-												borderRadius: "2vw 0 0 2vw",
-											}}
-										>
-											<p className="text-white" style={{ fontSize: "3.5vw", margin: 0 }}>
-												Open
-											</p>
-										</span>
-										<input
-											className="text-white"
-											type="time"
-											name="open_time"
-											data-day={selectedDay}
-											value={
-												editRes.opening_hours.find((entry) => entry.weekday === selectedDay)?.open_time || ""
-											}
-											onChange={handleResForm}
-											style={{
-												width: "75vw",
-												height: "15vw",
-												marginBottom: "1vw",
-												background: "#01040F",
-												border: "none",
-												fontSize: "4vw",
-												borderRadius: "0 2vw 2vw 0",
-											}}
-										/>
-									</div>
-
-
-									<div className="input-group d-flex justify-content-center align-items-center" style={{ marginBottom: "3vw" }}>
-										<span
-											className="d-flex justify-content-center align-items-center"
-											style={{
-												background: "#01040F",
-												border: "none",
-												height: "15vw",
-												width: "15vw",
-												marginTop: "-1vw",
-												borderRadius: "2vw 0 0 2vw",
-											}}
-										>
-											<p className="text-white" style={{ fontSize: "3.5vw", margin: 0 }}>
-												Close
-											</p>
-										</span>
-										<input
-											className="text-white"
-											type="time"
-											name="close_time"
-											data-day={selectedDay}
-											value={
-												editRes.opening_hours.find((entry) => entry.weekday === selectedDay)?.close_time || ""
-											}
-											onChange={handleResForm}
-											style={{
-												width: "75vw",
-												height: "15vw",
-												marginBottom: "1vw",
-												background: "#01040F",
-												border: "none",
-												fontSize: "4vw",
-												borderRadius: "0 2vw 2vw 0",
-											}}
-										/>
-									</div>
+											return (
+											<div key={dayName} className="day-input-group" style={{ marginBottom: "2vw" }}>
+												<div
+												className="input-group d-flex align-items-center"
+												style={{
+													marginBottom: "2vw",
+													gap: "2vw",
+													display: "flex",
+													alignItems: "center",
+												}}
+												>
+												<span
+													className="day-label d-flex justify-content-center align-items-center"
+													style={{
+													background: "#01040F",
+													border: "none",
+													height: "12vw",
+													width: "20vw",
+													borderRadius: "2vw 0 0 2vw",
+													color: "white",
+													fontSize: "3vw",
+													display: "flex",
+													justifyContent: "center",
+													alignItems: "center",
+													}}
+												>
+													{dayName}
+												</span>
+												<input
+													className="text-white"
+													type="time"
+													name="open_time"
+													data-day={dayName}
+													value={dayData.open_time}
+													onChange={handleResForm}
+													placeholder="Open Time"
+													style={{
+													flex: 1,
+													height: "12vw",
+													background: "#01040F",
+													border: "none",
+													fontSize: "3.5vw",
+													color: "white",
+													padding: "0 1vw",
+													}}
+												/>
+												<input
+													className="text-white"
+													type="time"
+													name="close_time"
+													data-day={dayName}
+													value={dayData.close_time}
+													onChange={handleResForm}
+													placeholder="Close Time"
+													style={{
+													flex: 1,
+													height: "12vw",
+													background: "#01040F",
+													border: "none",
+													fontSize: "3.5vw",
+													borderRadius: "0 2vw 2vw 0",
+													color: "white",
+													padding: "0 1vw",
+													}}
+												/>
+												</div>
+											</div>
+											);
+										})}
+										</div>
 									<div className="input-group d-flex justify-content-center align-items-center" style={{ marginBottom: "3vw" }}>
 										<span className='d-flex justify-content-center align-items-center' style={{ background: "#01040F", border: "none", height: "15vw", width: "15vw", marginTop: "-1vw", borderRadius: "2vw 0 0 2vw" }}>
 											<p className='text-white' style={{ fontSize: "3.5vw", margin: 0 }}>Phone</p>
@@ -810,18 +765,41 @@ const OwnerStallMenu = () => {
 								>
 									<img src={ArrowSVG} alt="" onClick={handleQr} />
 								</div>
-								<div className="card text-white" style={{ marginBottom: "6vw", marginTop: "21vw", background: "#01040F", borderRadius: "5vw", padding: "1vw", marginRight: "1vw", marginLeft: "1vw" }}>
-									<div className="row d-flex align-items-center justify-content-center" style={{ marginBottom: "3vw" }}>
-
-										<img src={selectedRestaurant.restaurant_image} className="image-fluid rounded" style={{ width: "43vw", height: "auto", marginTop: "3vw" }} alt="Restaurant" />
-
-										<div className="row d-flex align-items-center justify-content-center">
-											<h1 className="d-flex align-items-center justify-content-center" style={{ fontSize: "7vw", marginBottom: "2vw" }}>
-												{selectedRestaurant.restaurant_name}
-											</h1>
-										</div>
+								<div 
+									className="card text-white" 
+									style={{ 
+										marginBottom: "6vw", 
+										marginTop: "21vw", 
+										background: "#01040F", 
+										borderRadius: "5vw", 
+										padding: "1vw", 
+										marginRight: "1vw", 
+										marginLeft: "1vw" 
+									}}
+									>
+									<div className="d-flex flex-column align-items-center justify-content-center">
+										<img 
+										src={selectedRestaurant.restaurant_image} 
+										className="img-fluid rounded" 
+										style={{ 
+											width: "43vw", 
+											height: "auto", 
+											marginTop: "3vw" 
+										}} 
+										alt="Restaurant" 
+										/>
+										<h1 
+										className="text-center" 
+										style={{ 
+											fontSize: "7vw", 
+											marginBottom: "2vw", 
+											marginTop: "2vw" 
+										}}
+										>
+										{selectedRestaurant.restaurant_name}
+										</h1>
 									</div>
-								</div>
+									</div>
 								<div className='d-flex align-items-center justify-content-center'>
 									<img src={selectedRestaurant.qrcode_url} alt="" style={{ width: "80vw", borderRadius: "5vw" }} />
 								</div>
@@ -837,7 +815,9 @@ const OwnerStallMenu = () => {
 									<img
 										src={ArrowSVG}
 										alt=""
-										onClick={handleHeadBackBtn}
+										onClick={() => {
+											HandleIsRenderStallMenu();
+										}}
 									/>
 									<div>
 										<img

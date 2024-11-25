@@ -53,7 +53,6 @@ router.put('/:seller_id/profile', isLoggedIn, upload.fields([{ name: 'profilePho
 	}
 });
 
-
 router.post('/:seller_id/profile', isLoggedIn, upload.fields([{ name: 'profilePhoto' }, { name: 'restaurantPhoto' }]), async (req, res) => {
 	try {
 		const { fullName, bio, experienceYears, restaurantName, location, openingHours, contact } = req.body;

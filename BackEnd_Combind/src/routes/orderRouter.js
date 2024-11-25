@@ -6,9 +6,6 @@ const updateTodaySales = require("../utils/todaySalesUpdater");
 const translate = require("../middleware/azureTranslate");
 const router = express.Router();
 
-// const Stripe = require("stripe");
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
 // ==============================
 // Place a new order
 router.put("/:seller_id/orders", isLoggedIn, async (req, res) => {

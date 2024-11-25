@@ -4,7 +4,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 {/* Payment API components */}
-import { CheckoutForm, Return } from './StripeTest';
+import { CheckoutForm, Return } from './clientPages/StripeAPI';
 
 {/* Public components */}
 import RoleSelect from '../src/RoleSelect';
@@ -55,9 +55,6 @@ function App() {
  	return (
     	<Router>
       		<Routes>
-				<Route path="/checkout" element={ <CheckoutForm/> }/>
-				<Route path="/return" element={ <Return/> }/>
-
 				{/* Public route */}
 				<Route path="/" element={ <RootProtectedRoute> <RoleSelect onRoleSelect={ handleRoleSelect } /> </RootProtectedRoute>}/>
 
@@ -73,7 +70,9 @@ function App() {
 					<Route path="/clientWallet" element={ <HomeWithNavbar component= { <ClientWallet/> }/> }/>
 					<Route path="/clientFavourite" element={ <ClientFavourite/> }/>
 					<Route path="/requestMenu/:ownerID" element={ <ResNMenu/> }/>
-					<Route path="/checkingout" element={ <Loading/> }/>
+					<Route path="/checkout" element={ <CheckoutForm/> }/>
+					<Route path="/return" element={ <Return/> }/>
+					<Route path="/loadingTest" element={ <Loading/> }/>
         		</Route>
 				
 				{/* Owner private route */}

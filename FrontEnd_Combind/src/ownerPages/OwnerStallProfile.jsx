@@ -2,32 +2,41 @@ import { useNavigate } from "react-router-dom";
 import { useOwnerAuth } from "../utilities/OwnerAuthContext";
 import { useState, useEffect } from "react";
 import { STAR_ICON, PEN_ICON, STALL_ICON, QUEUE_ICON, HISTORY_ICON } from "./OwnerStallProfile_ICON";
+import CreateStallProfile from "../ownerComponents/CreateStallProfile";
+import OwnerEditProfile from "./OwnerEditProfile";
+import OwnerStallMenu from "./OwnerStallMenu";
 import Loading from "../Loading";
 import axios from "axios";
 import style from "../ownerPages/OwnerProfile.module.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import CreateStallProfile from "../ownerComponents/CreateStallProfile";
-
 const BACK_END_BASE_URL = import.meta.env.VITE_API_BACK_END_BASE_URL;
 
 const OwnerStallProfile = () => {
 	const navigate = useNavigate();
-
 	const { authData } = useOwnerAuth();
-
 	const [ isStallProfile, setIsStallProfile ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(true);
 	const [ stallProfile, setStallProfile ] = useState(null);
+	const [ isRenderEditProfile, setIsRenderEditProfile] = useState(false);
+	const [ isRenderStallMenu, setIsRenderStallMenu] = useState(false);
 
-	const HandleEditProfile = () => { navigate("/ownerEditProfile"); };
+	const HandleIsRenderEditProfile = () => { 
+		setIsRenderEditProfile(!isRenderEditProfile);
+	};
 	
-	const HandleOrderQueue = () => { navigate('/ownerOrderQueue'); }
+	const HandleIsRenderStallMenu = () => { 
+		setIsRenderStallMenu(!isRenderStallMenu);
+	};
 
-	const handleMenuEdit = () => { navigate("/ownerStallMenu"); };
-
-	const HandleHistory = () => { navigate("/ownerOrderHistory"); }
+	const HandleOrderQueue = () => { 
+		navigate('/ownerOrderQueue'); 
+	};
+	
+	const HandleHistory = () => { 
+		navigate("/ownerOrderHistory"); 
+	};
 
 	useEffect(() => {
         const isStallProfileAuth = async () => {
@@ -51,6 +60,14 @@ const OwnerStallProfile = () => {
 		return <Loading/>;
 	}
 
+	if (isRenderEditProfile) {
+		return <OwnerEditProfile HandleIsRenderEditProfile={ HandleIsRenderEditProfile } stallProfile={ stallProfile }/>;
+	};
+
+	if (isRenderStallMenu) {
+		return <OwnerStallMenu HandleIsRenderStallMenu={ HandleIsRenderStallMenu } stallProfile={ stallProfile }/>;
+	}
+
 	return isStallProfile ? (
 		<div className="container-fluid">
 				<div className="container-fluid mt-5">
@@ -58,7 +75,7 @@ const OwnerStallProfile = () => {
 						<div className="col-7 d-flex flex-column justify-content-center">
 							<div className="container d-flex justify-content-center align-items-center border rounded-pill mb-2" style={{ height: "45px" }}>
 								<p className="mb-0 me-3">{stallProfile.owner_profile.full_name}</p>
-								<i onClick={HandleEditProfile}>{PEN_ICON}</i>
+								<i onClick={HandleIsRenderEditProfile}>{PEN_ICON}</i>
 							</div>
 							
 							<div className="container d-flex justify-content-center align-items-center border-0 rounded-pill my-2" style={{ height: "45px", backgroundColor: "#2B964F" }}>
@@ -75,7 +92,7 @@ const OwnerStallProfile = () => {
 
 				<div className="container-fluid mt-5 ">
 					<div className="row d-flex justify-content-around">
-						<div onClick={handleMenuEdit} className="col d-flex mx-1 flex-column justify-content-center border-0 align-items-center" style={{ height: "120px", backgroundColor: "black", borderRadius: "15px" }}>
+						<div onClick={HandleIsRenderStallMenu} className="col d-flex mx-1 flex-column justify-content-center border-0 align-items-center" style={{ height: "120px", backgroundColor: "black", borderRadius: "15px" }}>
 							<i className="mt-3">{STALL_ICON}</i>
 							<p className="text-white fw-bold mt-2">Your Stall</p>
 						</div>

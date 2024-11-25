@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from "react-router-dom";
-
 import { useClientAuth } from '../utilities/ClientAuthContext';
 import { addItem } from '../clientComponents/CartSlice';
-
 import { Dropdown } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
