@@ -3,9 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
+{/* Payment API components */}
 import { CheckoutForm, Return } from './StripeTest';
-
 
 {/* Public components */}
 import RoleSelect from '../src/RoleSelect';

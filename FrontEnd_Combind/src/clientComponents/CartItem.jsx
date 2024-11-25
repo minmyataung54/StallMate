@@ -65,14 +65,7 @@ const CartItem = ({ cartItems, onContinueShopping }) => {
     localStorage.setItem('cartData', JSON.stringify(orderData));
   
     if(paymentMethod === "card"){
-      try {
-        const response = await axios.post('http://localhost:3000/create-checkout-session', orderData);
-    
-        const stripe = await loadStripe('pk_test_51QN8ZqKOxhHKR1S0B6vdC5AhXcDbo8DEycocQ6g1QHkn2z7Z6dcDj1E6q8wtBkkMDJwrTKA5AvKvJezqmPFSiwae00bUWuWnER');
-        await stripe.redirectToCheckout({ sessionId: response.data.id });
-      } catch (error) {
-        console.error('Error during checkout:', error);
-      }
+      navigate('/checkout');
     }
     else{
       navigate('/checkingout');

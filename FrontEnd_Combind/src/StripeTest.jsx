@@ -11,10 +11,19 @@ const stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
 
 const CheckoutForm = () => {
 	const fetchClientSecret = useCallback(() => {
+		const requestBody = [
+			{ name: "Item 1", price: 1000, quantity: 2 },
+			{ name: "Item 2", price: 2000, quantity: 2 }
+		];
+		console.log('requestBody:', requestBody);
 		// Create a Checkout Session
 		return fetch(`${BACK_END_BASE_URL}/dashboard/customer/create-checkout-session`, {
 			method: "POST",
-			credentials: "include"
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(requestBody)
 		})
 			.then((res) => res.json())
 			.then((data) => data.clientSecret);
@@ -64,7 +73,6 @@ const Return = () => {
 			<section id="success">
 				<p>
 					We appreciate your business! A confirmation email will be sent to {customerEmail}.
-
 					If you have any questions, please email <a href="mailto:orders@example.com">orders@example.com</a>.
 				</p>
 			</section>

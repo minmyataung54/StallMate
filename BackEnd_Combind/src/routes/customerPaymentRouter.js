@@ -5,17 +5,24 @@ const router = express.Router();
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const YOUR_DOMAIN = process.env.FRONT_END_BASE_URL;
+const FRONT_END_BASE_URL = process.env.FRONT_END_BASE_URL;
 
 router.post("/create-checkout-session", isLoggedIn, async (req, res) => {
+	const cartItems = req.body;
 	const session = await stripe.checkout.sessions.create({
 		ui_mode: 'embedded',
-		line_items: [{
-			price: 'price_1QOrIxLWHKVSnARMq77W8KgG',
-			quantity: 1,
-		}],
+		line_items: cartItems.map(item => ({
+			price_data: {
+				currency: 'thb',
+				product_data: {
+					name: item.name
+				},
+				unit_amount: item.price * 100 // Convert to small currency unit
+			},
+			quantity: item.quantity
+		})),
 		mode: 'payment',
-		return_url: `${YOUR_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}`,
+		return_url: `${FRONT_END_BASE_URL}/return?session_id={CHECKOUT_SESSION_ID}`,
 	});
 	
 	res.send({clientSecret: session.client_secret});
@@ -31,6 +38,19 @@ router.get("/session-status", isLoggedIn, async (req, res) => {
 });
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*router.put("/:customer_id/add-card", isLoggedIn, async (req, res) => {
 	try {

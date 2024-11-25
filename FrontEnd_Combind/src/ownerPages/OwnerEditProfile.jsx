@@ -1,17 +1,35 @@
-import { useNavigate } from "react-router-dom";
-import { useOwnerAuth } from "../utilities/OwnerAuthContext";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { useOwnerAuth } from "../utilities/OwnerAuthContext";
+import { useCookieAuth } from "../hooks/useCookieAuth";
+
 import style from "./OwnerEditProfile.module.css";
+
+import { LEFT_ARROW, CAMERA } from './OwnerEditProfile_ICON'
+
+const BACK_END_BASE_URL = import.meta.env.VITE_API_BACK_END_BASE_URL
 
 const OwnerEditProfile = () => {
 	const { authData } = useOwnerAuth();
+	const { clearRole } = useCookieAuth();
+	const [ isEditing, setIsEditing ] = useState(false);
+	const [ localOwnerName, setLocalOwnerName ] = useState( authData?.ownerData.ownerName || "" );
+
 	const navigate = useNavigate();
 
-	const [isEditing, setIsEditing] = useState(false);
-
-	const [localOwnerName, setLocalOwnerName] = useState(
-		authData?.ownerData.ownerName || ""
-	);
+	const HandleLogout = async () => {
+		await axios.get(`${BACK_END_BASE_URL}/auth/logout`, { withCredentials: true })
+		.then(response => {
+        	console.log(response.data.message);
+        	clearRole(); 
+        	window.location.href = '/';
+    	})
+    	.catch(error => {
+        	console.error('Logout error:', error.response?.data || error.message);
+        	alert('Logout failed. Please try again.');
+    	});
+	};
 
 	const handleBackBtn = () => {
 		navigate("/ownerStallProfile");
@@ -32,36 +50,7 @@ const OwnerEditProfile = () => {
 		console.log(localOwnerName);
 	};
 
-	const LEFT_ARROW = (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="30"
-			height="30"
-			fill="currentColor"
-			className="bi bi-arrow-left"
-			viewBox="0 0 16 16"
-		>
-			<path
-				fillRule="evenodd"
-				d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
-			/>
-		</svg>
-	);
-
-	const CAMERA = (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="48"
-			height="48"
-			fill="white"
-			className="bi bi-camera"
-			viewBox="0 0 16 16"
-		>
-			<path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z" />
-			<path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0" />
-		</svg>
-	);
-
+	
 	return (
 		<div
 			className="container-fluid  d-flex flex-column pd-0"
@@ -269,7 +258,7 @@ const OwnerEditProfile = () => {
 				</div>
 			</form>
 			{/* Finished */}
-			<div className="row mb-5 d-flex justify-content-center">
+			<div className="row mb-2 d-flex justify-content-center">
 				<div className="col-12 d-flex justify-content-center">
 					<button className="btn">
 						<h4
@@ -282,6 +271,23 @@ const OwnerEditProfile = () => {
 							}}
 						>
 							Finished
+						</h4>
+					</button>
+				</div>
+			</div>
+			<div className="row mb-5 d-flex justify-content-center">
+				<div className="col-12 d-flex justify-content-center">
+					<button className="btn">
+						<h4
+							className="text-white border-0 p-3"
+							onClick={HandleLogout}
+							style={{
+								width: "22rem",
+								backgroundColor: "#660000",
+								borderRadius: "20px",
+							}}
+						>
+						Logout
 						</h4>
 					</button>
 				</div>
