@@ -81,12 +81,11 @@ function App() {
 				<Route element={ <OwnerAuthProvider> <OwnerPrivateRoute/> </OwnerAuthProvider> }>
 					<Route path="/ownerStallProfile" element={  <OwnerStallProfile/> }/>
 					<Route path="/ownerEditProfile" element={  <OwnerEditProfile/> }/>
+
 					<Route path="/ownerStallMenu" element = { <OwnerStallMenu/> } />
 					<Route path="/ownerOrderQueue" element = { <OwnerOrderQueue/> } />
 					<Route path="/ownerOrderHistory" element = { <OwnerOrderHistory/> } />
         		</Route>
-
-
       		</Routes>
     	</Router>
   	);

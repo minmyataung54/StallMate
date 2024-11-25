@@ -38,7 +38,31 @@ const OwnerStallMenu = () => {
 	const [selectedAddMenu, setSelectedAddMenu] = useState({ imageUrl: null, name: "",description: "", price: 0, category: "" });
 	const [searchVisible, setSearchVisible] = useState(false);
 	const [query, setQuery] = useState("");
-	const [editRes, setEditRes] = useState(null);
+	const [editRes, setEditRes] = useState(
+		{
+			restaurant_id: "12345",
+			restaurant_name: "Delicious Bites",
+			restaurant_image: ShopLogo,
+			opening_hours: [
+			  { weekday: "Monday", open_time: "09:00", close_time: "21:00" },
+			  { weekday: "Tuesday", open_time: "09:00", close_time: "21:00" },
+			  { weekday: "Wednesday", open_time: "09:00", close_time: "21:00" },
+			  { weekday: "Thursday", open_time: "09:00", close_time: "21:00" },
+			  { weekday: "Friday", open_time: "09:00", close_time: "21:00" },
+			  { weekday: "Saturday", open_time: "10:00", close_time: "17:00" },
+			  { weekday: "Sunday", open_time: "10:00", close_time: "17:00" },
+			],
+			location: {
+			  address: "1234 Food Street",
+			  city: "Bangkok",
+			  state: "Bangkok"
+			},
+			contact: {
+			  phone: "0000000000",
+			  email: "food@gmail.com"
+			}
+		  }
+		);
 	const [selectedDay, setSelectedDay] = useState("Monday");
 
 	const handleMenuCreate = async (e) => {
@@ -72,9 +96,34 @@ const OwnerStallMenu = () => {
 		}
 	};
 
-	
-
 	useEffect(() => {
+        const fetchMenu = async () => {
+            try {
+                const response = await axios.get(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/menu`, { 
+					withCredentials: true,
+					headers: { "Cache-Control": "no-store", Pragma: "no-cache" }
+				});
+                if (response.status === 200) {
+                    setSelectedRestaurant(response.data); setSelectedRestaurant
+					setLoading(false);
+					console.log(response.data);
+                } else {
+                    setSelectedRestaurant(null);
+					setLoading(true);
+                }
+				console.log(response.status);
+            } catch (error) {
+                setSelectedRestaurant(null);
+				setLoading(true);
+            }
+        };
+        fetchMenu();
+    }, []);
+
+
+
+
+	/*useEffect(() => {
 		const data = [
 			{
 				"restaurant_id": "12345",
@@ -124,52 +173,6 @@ const OwnerStallMenu = () => {
 						}
 					]
 				},
-				"opening_hours": [
-					{
-						"weekday": "Monday",
-						"open_time": "09:00",
-						"close_time": "21:00"
-					},
-					{
-						"weekday": "Tuesday",
-						"open_time": "09:00",
-						"close_time": "21:00"
-					},
-					{
-						"weekday": "Wednesday",
-						"open_time": "09:00",
-						"close_time": "21:00"
-					},
-					{
-						"weekday": "Thursday",
-						"open_time": "09:00",
-						"close_time": "21:00"
-					},
-					{
-						"weekday": "Friday",
-						"open_time": "09:00",
-						"close_time": "21:00"
-					},
-					{
-						"weekday": "Saturday",
-						"open_time": "09:00",
-						"close_time": "17:00"
-					},
-					{
-						"weekday": "Sunday",
-						"open_time": "09:00",
-						"close_time": "17:00"
-					}
-				],
-				"location": {
-					"address": "1234 Food Street",
-					"city": "Bangkok",
-					"state": "Bangkok"
-				},
-				"contact": {
-					"phone": "0000000000",
-					"email": "food@gmail.com",
-				}
 			}
 		];
 
@@ -183,27 +186,10 @@ const OwnerStallMenu = () => {
 			}
 			setLoading(false);
 		}, 300);
-	}, []);
-	/*useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const response = await axios.get(`http://localhost:3000/dashboard/stallowner/${ownerID.ownerID}/menu`, { withCredentials: true });
-                if (response.status === 200) {
-                    setRestaurants(response.data);
-					setLoading(false);
-					console.log(response.data);
-                } else {
-                    setRestaurants(null);
-					setLoading(true);
-                }
-				console.log(response.status);
-            } catch (error) {
-                setRestaurants(null);
-				setLoading(true);
-            }
-        };
-        checkAuth();
-    }, []);*/
+	}, []);*/
+
+	
+
 	if (loading) {
 		return <div className="text-center text white">Loading...</div>;
 	}
@@ -318,43 +304,38 @@ const OwnerStallMenu = () => {
 		try {
 			const response = await axios.post(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/menu/${selectedMenu._id}`, 
 				formData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
-				console.log('Menu created successfully:', response.data);
-				alert('Menu created successfully!');
+				console.log('Menu edited successfully:', response.data);
+				alert('Menu edited successfully!');
 		} catch (error) {
-			console.error('Error creating menu:', error.response?.data || error.message);
-			alert('Failed to create menu. Please check the details and try again.');
+			console.error('Error editing menu:', error.response?.data || error.message);
+			alert('Failed to edit menu. Please check the details and try again.');
 		}
 	};
 
 
 	const handleResSubmit = async (e) => {
 		e.preventDefault();
-		
-		if (!selectedRestaurant.restaurant_image) {
-			alert('Please select an image file.');
-			return;
-		}
 
-		console.log(selectedMenu.imageUrl)
+		console.log(editRes)
 
 		const formData = new FormData();
-		formData.append('restaurantPhoto', selectedRestaurant.restaurant_image);
-		formData.append('restaurantName', selectedRestaurant.restaurant_name);
-		formData.append('location', JSON.stringify(selectedRestaurant.location));
-		formData.append('openingHours', JSON.stringify(selectedRestaurant.opening_hours));
-		formData.append('contact', JSON.stringify(selectedRestaurant.contact));
+		formData.append('restaurantPhoto', editRes.restaurant_image);
+		formData.append('restaurantName', editRes.restaurant_name);
+		formData.append('location', JSON.stringify(editRes.location));
+		formData.append('openingHours', JSON.stringify(editRes.opening_hours));
+		formData.append('contact', JSON.stringify(editRes.contact));
 
 		console.log('BACK_END_BASE_URL:', BACK_END_BASE_URL);
 		console.log('authData?.ownerData.ownerID', authData?.ownerData.ownerID);
 
 		try {
-			const response = await axios.post(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/menu/${selectedMenu._id}`, 
+			const response = await axios.post(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/profile`, 
 				formData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
-				console.log('Menu created successfully:', response.data);
-				alert('Menu created successfully!');
+				console.log('edit restaurant successfully:', response.data);
+				alert('edit restaurant info successfully!');
 		} catch (error) {
 			console.error('Error creating menu:', error.response?.data || error.message);
-			alert('Failed to create menu. Please check the details and try again.');
+			alert('Failed to edit restaurant info. Please check the details and try again.');
 		}
 	};
 
@@ -364,9 +345,9 @@ const OwnerStallMenu = () => {
 
 	const handleResFileChange = (e) => {
 		const file = e.target.files[0];
-			setSelectedRestaurant((prev) => ({
+			setEditRes((prev) => ({
 				...prev,
-				imageUrl: file,
+				restaurant_image: file,
 			}));
 	}
 
@@ -374,7 +355,7 @@ const OwnerStallMenu = () => {
 		const { name, value, dataset } = e.target;
 		const day = dataset.day;
 	
-		setSelectedRestaurant((prev) => {
+		setEditRes((prev) => {
 			
 			if (day) {
 				const updatedHours = prev.opening_hours.map((entry) =>
@@ -504,7 +485,7 @@ const OwnerStallMenu = () => {
 
 
 							<div className='row' style={{ marginTop: "20vw", display: "flex", flexDirection: "column", alignItems: "center" }}>
-								<img src={selectedRestaurant.restaurant_image} alt="" style={{ width: "60vw" }} />
+								<img src={editRes.restaurant_image} alt="" style={{ width: "60vw" }} />
 								<form onSubmit={handleResSubmit} className='d-flex flex-column justify-content-center align-items-center' style={{ position: "relative" }}>
 									<img
 										src={EditLogoSVG}
@@ -523,7 +504,7 @@ const OwnerStallMenu = () => {
 											type="text"
 											onChange={handleResForm}
 											name="restaurant_name"
-											value={selectedRestaurant.restaurant_name || ""}
+											value={editRes.restaurant_name || ""}
 											style={{ width: "75vw", height: "15vw", marginBottom: "1vw", background: "#01040F", border: "none", fontSize: "4vw", borderRadius: "0 2vw 2vw 0" }}
 										/>
 									</div>
@@ -536,7 +517,7 @@ const OwnerStallMenu = () => {
 											type="text"
 											onChange={handleResForm}
 											name="address"
-											value={selectedRestaurant.location.address || ""}
+											value={editRes.location.address || ""}
 											style={{ width: "75vw", height: "15vw", marginBottom: "1vw", background: "#01040F", border: "none", fontSize: "4vw", borderRadius: "0 2vw 2vw 0" }}
 										/>
 									</div>
@@ -549,7 +530,7 @@ const OwnerStallMenu = () => {
 											type="text"
 											onChange={handleResForm}
 											name="city"
-											value={selectedRestaurant.location.city || ""}
+											value={editRes.location.city || ""}
 											style={{ width: "75vw", height: "15vw", marginBottom: "1vw", background: "#01040F", border: "none", fontSize: "4vw", borderRadius: "0 2vw 2vw 0" }}
 										/>
 									</div>
@@ -562,7 +543,7 @@ const OwnerStallMenu = () => {
 											type="text"
 											onChange={handleResForm}
 											name="state"
-											value={selectedRestaurant.location.state || ""}
+											value={editRes.location.state || ""}
 											style={{ width: "75vw", height: "15vw", marginBottom: "1vw", background: "#01040F", border: "none", fontSize: "4vw", borderRadius: "0 2vw 2vw 0" }}
 										/>
 									</div>
@@ -597,7 +578,7 @@ const OwnerStallMenu = () => {
 												borderRadius: "0 2vw 2vw 0",
 											}}
 										>
-											{selectedRestaurant.opening_hours.map((entry) => (
+											{editRes.opening_hours.map((entry) => (
 												<option key={entry.weekday} value={entry.weekday}>
 													{entry.weekday}
 												</option>
@@ -628,7 +609,7 @@ const OwnerStallMenu = () => {
 											name="open_time"
 											data-day={selectedDay}
 											value={
-												selectedRestaurant.opening_hours.find((entry) => entry.weekday === selectedDay)?.open_time || ""
+												editRes.opening_hours.find((entry) => entry.weekday === selectedDay)?.open_time || ""
 											}
 											onChange={handleResForm}
 											style={{
@@ -666,7 +647,7 @@ const OwnerStallMenu = () => {
 											name="close_time"
 											data-day={selectedDay}
 											value={
-												selectedRestaurant.opening_hours.find((entry) => entry.weekday === selectedDay)?.close_time || ""
+												editRes.opening_hours.find((entry) => entry.weekday === selectedDay)?.close_time || ""
 											}
 											onChange={handleResForm}
 											style={{
@@ -689,7 +670,7 @@ const OwnerStallMenu = () => {
 											type="text"
 											onChange={handleResForm}
 											name="phone"
-											value={selectedRestaurant.contact.phone || ""}
+											value={editRes.contact.phone || ""}
 											style={{ width: "75vw", height: "15vw", marginBottom: "1vw", background: "#01040F", border: "none", fontSize: "4vw", borderRadius: "0 2vw 2vw 0" }}
 										/>
 									</div>
@@ -703,7 +684,7 @@ const OwnerStallMenu = () => {
 											type="email"
 											onChange={handleResForm}
 											name="email"
-											value={selectedRestaurant.contact.email || ""}
+											value={editRes.contact.email || ""}
 											style={{ width: "75vw", height: "15vw", marginBottom: "1vw", background: "#01040F", border: "none", fontSize: "4vw", borderRadius: "0 2vw 2vw 0" }}
 										/>
 									</div>
@@ -842,7 +823,7 @@ const OwnerStallMenu = () => {
 									</div>
 								</div>
 								<div className='d-flex align-items-center justify-content-center'>
-									<img src={selectedRestaurant.qr_code} alt="" style={{ width: "80vw", borderRadius: "5vw" }} />
+									<img src={selectedRestaurant.qrcode_url} alt="" style={{ width: "80vw", borderRadius: "5vw" }} />
 								</div>
 							</div>
 						</div>
@@ -916,7 +897,7 @@ const OwnerStallMenu = () => {
 											</h1>
 										</div>
 										<p className="card-text text-white" style={{ fontSize: "4vw" }}>
-											<i className="bi bi-star" style={{ color: "yellow" }}></i> {selectedRestaurant.rating}
+											<i className="bi bi-star" style={{ color: "yellow" }}></i> {selectedRestaurant.rating.average}
 										</p>
 										<Dropdown onSelect={handleSelectLanguage} style={{ marginTop: "2vw" }}>
 											<Dropdown.Toggle variant="success" id="dropdown-basic" style={{ fontSize: "3.5vw", color: "black", fontWeight: 600, background: "#4CF986" }}>

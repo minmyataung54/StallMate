@@ -113,6 +113,7 @@ router.get('/:seller_id/menu', isLoggedIn, async (req, res) => {
             restaurant_image: stallOwnerProfile.restaurant.photo,
             rating: stallOwnerProfile.restaurant.rating || 0,
             categories: categorizedMenu,
+            qrcode_url: menu.qrcode_url
         });
     } catch (err) {
         console.error('Error fetching menu:', err);

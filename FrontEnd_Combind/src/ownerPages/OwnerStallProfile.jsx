@@ -17,9 +17,9 @@ const OwnerStallProfile = () => {
 
 	const { authData } = useOwnerAuth();
 
-	const [isStallProfile, setIsStallProfile] = useState(false);
-	const [isLoading, setIsLoading] = useState(true);
-	const [stallProfile, setStallProfile] = useState(null);
+	const [ isStallProfile, setIsStallProfile ] = useState(false);
+	const [ isLoading, setIsLoading ] = useState(true);
+	const [ stallProfile, setStallProfile ] = useState(null);
 
 	const HandleEditProfile = () => { navigate("/ownerEditProfile"); };
 	

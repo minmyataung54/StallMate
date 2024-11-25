@@ -14,8 +14,7 @@ const OwnerEditProfile = () => {
 	);
 
 	const handleBackBtn = () => {
-		console.log("profile");
-		navigate("/ownerProfile");
+		navigate("/ownerStallProfile");
 	};
 
 	const handleNameChange = (e) => {
