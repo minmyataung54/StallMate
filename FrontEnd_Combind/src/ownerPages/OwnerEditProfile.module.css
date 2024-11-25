@@ -1,0 +1,17 @@
+.content {
+	width: 100%;
+	/* col-12 */
+	display: flex;
+	/* d-flex */
+	justify-content: center;
+	align-self: start;
+}
+
+.cardBorder {
+	border: 4px solid white;
+	border-radius: 15px;
+}
+
+.cardBorder>span {
+	font-weight: bold;
+}

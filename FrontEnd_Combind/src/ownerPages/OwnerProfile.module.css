@@ -1,0 +1,35 @@
+.mockup>h5 {
+	font-weight: bold;
+}
+
+.mockup>div>span>p {
+	margin-bottom: 0;
+	margin-left: 0.5rem;
+	font-weight: bold;
+}
+
+.mockup>hr {
+	border: none;
+	height: 3px;
+	background-color: white;
+	margin-top: 0;
+	margin-bottom: 10px;
+}
+
+.top-nav {
+	width: 100%;
+	padding: 10px;
+	z-index: 1000;
+}
+
+.content {
+	margin-top: 70px;
+	color: white;
+}
+
+.userName {
+	border: solid 1px white;
+	border-radius: 20px;
+	width: 200px;
+	height: 47px;
+}

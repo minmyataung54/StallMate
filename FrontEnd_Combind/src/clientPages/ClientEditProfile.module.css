@@ -1,0 +1,15 @@
+.content {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-self: start;
+}
+
+.cardBorder {
+	border: 4px solid white;
+	border-radius: 15px;
+}
+
+.cardBorder>span {
+	font-weight: bold;
+}
