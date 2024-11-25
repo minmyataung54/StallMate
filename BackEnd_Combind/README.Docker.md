@@ -1,5 +1,8 @@
 ### Building and running your application
 
+### On macOS, you can comment out FRONT_END_BASE_URL = http://localhost:5173 and NODE_ENV = development in the .env file, and you're ready to run on Docker using the guide below.
+### On Windows, there are some issues with Docker and WSL. Use the full .env file and run npm install, and then you're ready to start the application with npm start.
+
 When you're ready, start your application by running:
 `docker compose up --build`.
 
