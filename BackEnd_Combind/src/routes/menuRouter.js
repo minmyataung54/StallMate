@@ -174,8 +174,19 @@ router.post('/:seller_id/menu/:item_id', isLoggedIn, upload.single('image'), asy
         if (category) menuItem.category = category;
         if (req.file) menuItem.imageUrl = req.file.location;
 
-        if (name) menuItem.name_en = await translate(name).catch(() => name);
-        if (description) menuItem.description_en = await translate(description).catch(() => description);
+        // if (name) menuItem.name_en = await translate(name).catch(() => name);
+        // if (description) menuItem.description_en = await translate(description).catch(() => description);
+
+        // Extract string from "nameTranslation" object as the schema requires a string
+        if (name) {
+            const nameTranslation = await translate(name).catch(() => ({ translatedText: name }));
+            menuItem.name_en = nameTranslation.translatedText || name; 
+        }
+
+        if (description) {
+            const descriptionTranslation = await translate(description).catch(() => ({ translatedText: description }));
+            menuItem.description_en = descriptionTranslation.translatedText || description; 
+        }
 
         const updatedMenu = await menu.save();
         res.json({ message: 'Menu item updated successfully!', menu: updatedMenu });
