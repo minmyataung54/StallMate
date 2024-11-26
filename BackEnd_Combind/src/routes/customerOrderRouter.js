@@ -1,9 +1,8 @@
 const express = require('express');
 const Order = require('../models/orderSchema');
+const StallOwnerProfile = require('../models/stallProfileSchema');
 const isLoggedIn = require('../middleware/authMiddleware');
 const router = express.Router();
-
-const StallOwnerProfile = require('../models/stallProfileSchema'); // Replace with the correct path to your StallOwner_profile model
 
 router.get('/:customer_ID/history', isLoggedIn, async (req, res) => {
     try {
@@ -25,8 +24,8 @@ router.get('/:customer_ID/history', isLoggedIn, async (req, res) => {
                 return {
                     orderId: order._id,
                     sellerId: order.sellerId,
-                    restaurantName: stallOwner && stallOwner.restaurant ? stallOwner.restaurant.name : 'Unknown', // Safely access restaurant name
-                    restaurantPhoto: stallOwner && stallOwner.restaurant ? stallOwner.restaurant.photo : null, // Safely access restaurant photo
+                    restaurantName: stallOwner && stallOwner.restaurant ? stallOwner.restaurant.name : 'Unknown',
+                    restaurantPhoto: stallOwner && stallOwner.restaurant ? stallOwner.restaurant.photo : null, 
                     items: order.items,
                     totalAmount: order.totalAmount,
                     paymentMethod: order.paymentMethod,
