@@ -24,14 +24,27 @@ const BACK_END_BASE_URL = import.meta.env.VITE_API_BACK_END_BASE_URL;
 const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 	const navigate = useNavigate();
 	const { authData } = useOwnerAuth();
-	const [ selectedRestaurant, setSelectedRestaurant ] = useState(null);
-	
-	/*restaurant_id: authData.ownerData.ownerID,
-        restaurant_name: stallOwnerProfile.restaurant.name,
-        restaurant_image: stallOwnerProfile.restaurant.photo,
-        rating: 0,
-        categories: categorizedMenu,
-        qrcode_url: menu.qrcode_url*/
+	const [ selectedRestaurant, setSelectedRestaurant ] = useState({
+		restaurant_id: stallProfile.StallOwnerID,
+		restaurant_name: stallProfile.restaurant.name,
+		restaurant_image: stallProfile.restaurant.photo,
+		rating: {
+		  	number_of_reviews: 0,
+		  	average: 0
+		},
+		categories: {
+			"Beverages": [],
+			"Main Dish": [],
+			"Snacks": [],
+			"Appetizers": [],
+			"Side-dish": [],
+			"Soup": [],
+			"Salads": [],
+			"Desserts": [],
+			"Others": []
+		},
+		qrcode_url: null
+	});
 
 	const [ loading, setLoading ] = useState(true);
 	const [ selectedLanguage, setSelectedLanguage ] = useState("English");
@@ -42,26 +55,75 @@ const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 	const [ selectedAddMenu, setSelectedAddMenu ] = useState({ imageUrl: null, name: "",description: "", price: 0, category: "" });
 	const [ searchVisible, setSearchVisible ] = useState(false);
 	const [ query, setQuery ] = useState("");
-	const [ editRes, setEditRes ] = useState(
-		{
-			restaurant_name: stallProfile.restaurant.name,
-			restaurant_image: stallProfile.restaurant.photo,
-			opening_hours: stallProfile.restaurant.opening_hours.map((day) => ({
-				weekday: day.weekday,
-				open_time: day.open_time,
-				close_time: day.close_time,
-			})),
-			location: {
-				address: stallProfile.restaurant.location.address,
-				city: stallProfile.restaurant.location.city,
-				state: stallProfile.restaurant.location.state
-			},
-			contact: {
-				phone: stallProfile.restaurant.contact.phone,
-				email: stallProfile.restaurant.contact.email
-			}
+	const [ editRes, setEditRes ] = useState({
+		restaurant_name: stallProfile.restaurant.name,
+		restaurant_image: stallProfile.restaurant.photo,
+		opening_hours: stallProfile.restaurant.opening_hours.map((day) => ({
+			weekday: day.weekday,
+			open_time: day.open_time,
+			close_time: day.close_time,
+		})),
+		location: {
+			address: stallProfile.restaurant.location.address,
+			city: stallProfile.restaurant.location.city,
+			state: stallProfile.restaurant.location.state
+		},
+		contact: {
+			phone: stallProfile.restaurant.contact.phone,
+			email: stallProfile.restaurant.contact.email
 		}
-	);
+	});
+
+	console.log('addMenu:', addMenu);
+
+	useEffect(() => {
+		console.log('isRun:');
+        const menuAuth = async () => {
+            try {
+                const response = await axios.get(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/menu`, { 
+					withCredentials: true,
+					headers: { "Cache-Control": "no-store", Pragma: "no-cache" }
+				});
+                if (response.status === 200) {
+					if (response.data.message === 'No menu items available.') {
+						setSelectedRestaurant({
+							restaurant_id: stallProfile.StallOwnerID,
+							restaurant_name: stallProfile.restaurant.name,
+							restaurant_image: stallProfile.restaurant.photo,
+							rating: {
+								number_of_reviews: 0,
+								average: 0
+							},
+							categories: {
+								"Beverages": [],
+								"Main Dish": [],
+								"Snacks": [],
+								"Appetizers": [],
+								"Side-dish": [],
+								"Soup": [],
+								"Salads": [],
+								"Desserts": [],
+								"Others": []
+							},
+							qrcode_url: response.data.qrcode_url
+						});
+						setLoading(false);
+					} else {
+						setSelectedRestaurant(response.data);
+						setLoading(false);
+					}
+				console.log('isFinish:');
+                } else {
+                    setSelectedRestaurant(null);
+					setLoading(true);
+                }
+            } catch (error) {
+                setSelectedRestaurant(null);
+				setLoading(true);
+            }
+        };
+        menuAuth();
+    }, [addMenu, selectedMenu]);
 
 	console.log(stallProfile);
 	console.log(editRes.opening_hours);
@@ -102,36 +164,8 @@ const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 		}
 	};
 
-	useEffect(() => {
-        const fetchMenu = async () => {
-            try {
-                const response = await axios.get(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/menu`, { 
-					withCredentials: true,
-					headers: { "Cache-Control": "no-store", Pragma: "no-cache" }
-				});
-                if (response.status === 200) {
-					if (response.message === 'No menu items available.') {
-						setSelectedRestaurant(response.data);
-						setLoading(false);
-					} else {
-						setSelectedRestaurant(response.data);
-						setLoading(false);
-						console.log('Menu:', response.data);
-					}
-                } else {
-                    setSelectedRestaurant(null);
-					setLoading(true);
-                }
-				console.log(response.status);
-            } catch (error) {
-                setSelectedRestaurant(null);
-				setLoading(true);
-            }
-        };
-        fetchMenu();
-    }, []);
-
 	
+
 
 	if (loading) {
 		return <Loading />;
@@ -223,7 +257,7 @@ const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 	};
 	
 
-	const handleSubmit = async (e) => {
+	const HandleEditMenu = async (e) => {
 		e.preventDefault();
 
 
@@ -293,7 +327,8 @@ const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 			formData.append(`openingHours[${index}][open_time]`, day.open_time);
 			formData.append(`openingHours[${index}][close_time]`, day.close_time);
 		});
-		//formData.append('contact', editRes.contact);
+		formData.append('contact[phone]', editRes.contact.phone);
+		formData.append('contact[email]', editRes.contact.email);
 
 		console.log('formData:', formData);
 
@@ -305,6 +340,24 @@ const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 				formData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
 				console.log('edit restaurant successfully:', response.data);
 				alert('edit restaurant info successfully!');
+				setEditRes({
+					restaurant_name: editRes.restaurant_name,
+					restaurant_image: editRes.restaurant_image,
+					opening_hours: filteredDays.map((day) => ({
+						weekday: day.weekday,
+						open_time: day.open_time,
+						close_time: day.close_time,
+					})),
+					location: {
+						address: editRes.location.address,
+						city: editRes.location.city,
+						state: editRes.location.state
+					},
+					contact: {
+						phone: editRes.contact.phone,
+						email: editRes.contact.email
+					}
+				})
 				setIsResVisible(false);
 		} catch (error) {
 			console.error('Error creating menu:', error.response?.data || error.message);
@@ -395,7 +448,6 @@ const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 		});
 	};
 
-
 	return (
 		<div className="container-fluid"> 
 			{selectedRestaurant ? (
@@ -410,7 +462,7 @@ const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 
 						<div className='row' style={{ marginTop: "35vw", display: "flex", flexDirection: "column", alignItems: "center" }}>
 							<img src={selectedMenu.imageUrl} alt="" style={{ width: "60vw" }} />
-							<form onSubmit={handleSubmit} className='d-flex flex-column justify-content-center align-items-center' style={{ position: "relative" }}>
+							<form onSubmit={HandleEditMenu} className='d-flex flex-column justify-content-center align-items-center' style={{ position: "relative" }}>
 								<img
 									src={EditLogoSVG}
 									alt="Edit Logo"
@@ -746,16 +798,34 @@ const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 												filter: "invert(65%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
 											}} />
 										</span>
-										<input
-											className='text-white'
-											type="text"
-											onChange={handleAddFormChange}
-											name="category"
-											value={selectedAddMenu.category || ""}
-											placeholder='Category'
-											required
-											style={{ width: "75vw", height: "15vw", marginBottom: "1vw", background: "#01040F", border: "none", fontSize: "4vw", borderRadius: "0 2vw 2vw 0" }}
-										/>
+										<select
+                                            className='text-white'
+                                            onChange={handleAddFormChange}
+                                            name="category"
+                                            value={selectedAddMenu.category || ""}
+                                            required
+                                            style={{ 
+                                                width: "75vw", 
+                                                height: "15vw", 
+                                                marginBottom: "1vw", 
+                                                background: "#01040F", 
+                                                border: "none", 
+                                                fontSize: "4vw", 
+                                                borderRadius: "0 2vw 2vw 0",
+                                                color: "white" 
+                                            }}
+                                        >
+                                            <option value="" disabled>Select Category</option>
+                                            <option value="Beverages">Beverages</option>
+                                            <option value="Main Dish">Main Dish</option>
+                                            <option value="Snacks">Snacks</option>
+                                            <option value="Appetizers">Appetizers</option>
+                                            <option value="Side-dish">Side-dish</option>
+                                            <option value="Soup">Soup</option>
+                                            <option value="Salads">Salads</option>
+                                            <option value="Desserts">Desserts</option>
+                                            <option value="Others">Others</option>
+                                        </select>
 									</div>
 
 

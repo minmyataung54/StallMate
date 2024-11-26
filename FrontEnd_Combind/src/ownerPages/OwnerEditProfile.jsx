@@ -106,6 +106,7 @@ const OwnerEditProfile = ({ HandleIsRenderEditProfile, stallProfile }) => {
 			const response = await axios.post(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/profile`, 
 				formData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
 				console.log('Profile update successfully:', response.data);
+				HandleIsRenderEditProfile();
 				// alert('Profile update successfully!');
 		} catch (error) {
 			console.error('Error updating profile:', error.response?.data || error.message);
@@ -219,37 +220,8 @@ const OwnerEditProfile = ({ HandleIsRenderEditProfile, stallProfile }) => {
 						</div>
 					</div>
 
-					{/* Repeat for additional cards */}
-					<div className="row text-white my-2 w-75">
-						<div
-							className={`col-12 d-flex align-items-center p-2 ${style.cardBorder}`}
-						>
-							<img
-								className="me-3"
-								src="src/assets/mapIcon.png"
-								alt="map-icon"
-								style={{ width: "40px" }}
-							/>
-							<span>England, London</span>
-						</div>
-					</div>
-
-					<div className="row text-white my-2 w-75">
-						<div
-							className={`col-12 d-flex align-items-center p-2 ${style.cardBorder}`}
-						>
-							<img
-								className="me-3"
-								src="src/assets/emailIcon.png"
-								alt="email-icon"
-								style={{ width: "40px" }}
-							/>
-							<span>david.beck@gmail.com</span>
-						</div>
-					</div>
-
 					{/* Card 4 */}
-					<div className="row text-white my-2 w-75">
+					<div className="row text-white mt-2 w-75">
 						<div
 							className={`col-12 d-flex align-items-center p-2 ${style.cardBorder}`}
 							onClick={() => setIsEditingBio(true)}
@@ -283,71 +255,9 @@ const OwnerEditProfile = ({ HandleIsRenderEditProfile, stallProfile }) => {
 						</div>
 					</div>
 
-					{/* Card 5 */}
-					<div className="row text-white my-2 w-75">
-						<div
-							className={`col-12 d-flex align-items-center p-2 ${style.cardBorder}`}
-						>
-							<img
-								className="me-3"
-								src="src/assets/mapIcon.png"
-								alt="map-icon"
-								style={{ width: "40px" }}
-							/>
-							<span>England, London</span>
-						</div>
-					</div>
-					{/* Card 6 */}
-
-					<div className="row text-white my-2 w-75">
-						<div
-							className={`col-12 d-flex align-items-center p-2 ${style.cardBorder}`}
-						>
-							<img
-								className="me-3"
-								src="src/assets/cake1.png"
-								alt="map-icon"
-								style={{ width: "40px" }}
-							/>
-							<span>Date of Birth</span>
-						</div>
-					</div>
-
-					{/* Card 7 */}
-
-					<div className="row text-white my-2 w-75">
-						<div
-							className={`col-12 d-flex align-items-center p-2 ${style.cardBorder}`}
-						>
-							<img
-								className="me-3"
-								src="src/assets/Earth.png"
-								alt="map-icon"
-								style={{ width: "40px" }}
-							/>
-							<span>Nationality</span>
-						</div>
-					</div>
-
-					{/* Card 8 */}
-
-					<div className="row text-white my-2 w-75">
-						<div
-							className={`col-12 d-flex align-items-center p-2 ${style.cardBorder}`}
-						>
-							<img
-								className="me-3"
-								src="src/assets/translate.png"
-								alt="map-icon"
-								style={{ width: "40px" }}
-							/>
-							<span>Languages Spoken</span>
-						</div>
-					</div>
-
 					{/* Card 9 */}
 
-					<div className="row text-white my-2 w-75">
+					<div className="row text-white mt-4 w-75">
 						<div
 							className={`col-12 d-flex align-items-center p-2 ${style.cardBorder}`}
 							onClick={() => setIsEditingExpYear(true)}

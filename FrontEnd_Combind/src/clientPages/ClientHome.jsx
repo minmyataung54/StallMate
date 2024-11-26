@@ -78,7 +78,7 @@ const ClientHome = () => {
 
 			<div className="container-fluid d-flex justify-content-between" style={{ marginTop: "6vw", fontSize: "4vw" }}>
 				<p className='text-white'>Order History</p>
-				<a className='text-success' href="">See All</a>
+				<a className='text-success' href="/clientOrderHistory">See All</a>
 			</div>
 			<div className="row" style={{ marginTop: "8vw" }}>
 				<div className="col d-flex justify-content-around">

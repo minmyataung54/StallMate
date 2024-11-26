@@ -21,6 +21,7 @@ const OwnerStallProfile = () => {
 	const [ stallProfile, setStallProfile ] = useState(null);
 	const [ isRenderEditProfile, setIsRenderEditProfile] = useState(false);
 	const [ isRenderStallMenu, setIsRenderStallMenu] = useState(false);
+	const [ walletHistory, setWalletHistory ] = useState(null);
 
 	const HandleIsRenderEditProfile = () => { 
 		setIsRenderEditProfile(!isRenderEditProfile);
@@ -54,7 +55,28 @@ const OwnerStallProfile = () => {
             }
         };
         isStallProfileAuth();
-    }, []);
+    }, [isRenderEditProfile]);
+
+	useEffect(() => {
+		const walletAuth = async () => {
+			try {
+				const response = await axios.get(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData.ownerData.ownerID}/wallet/sales`, {
+					withCredentials: true, 
+					headers: { "Cache-Control": "no-store", Pragma: "no-cache" }
+				})
+				if (response.status === 200 && response.data.message === "Today's sales amount fetched successfully.") {
+					setWalletHistory(response.data.totalAmount);
+					console.log('walletHistory:', walletHistory);
+				} else {
+					setWalletHistory(null);
+				}
+			} catch (error) {
+				setWalletHistory(null);
+				console.log('Error:', error);
+			};
+		}
+		walletAuth();
+	}, []);
 
 	if (isLoading === true) {
 		return <Loading/>;
@@ -105,6 +127,11 @@ const OwnerStallProfile = () => {
 						<div onClick={HandleHistory} className="col d-flex mx-1 flex-column justify-content-center border-0 align-items-center" style={{ height: "120px", backgroundColor: "black", borderRadius: "15px" }}>
 							<i className="mt-3">{HISTORY_ICON}</i>
 							<p className="text-white fw-bold ">History</p>
+						</div>
+					</div>
+					<div className="row d-flex justify-content-around mt-3">
+						<div className="col d-flex mx-1 flex-column justify-content-center border-0 align-items-center" style={{ height: "120px", backgroundColor: "black", borderRadius: "15px" }}>
+							<p className="text-white fw-bold mt-2">Today's sales amount: {walletHistory} ฿</p>
 						</div>
 					</div>
 				</div>

@@ -19,6 +19,7 @@ import ClientNavBar from './clientComponents/ClientNavBar';
 import ResNMenu from './clientPages/ResNMenu';
 import Loading from './Loading';
 import ClientFavourite from './clientPages/ClientFavourite';
+import ClientOrderHistory from './clientPages/ClientOrderHistory';
 
 {/* Owner pages */}
 import OwnerLogin from './ownerPages/OwnerLogin';
@@ -69,6 +70,7 @@ function App() {
 					<Route path="/clientEditProfile" element={ <ClientEditProfile/> } />
 					<Route path="/clientWallet" element={ <HomeWithNavbar component= { <ClientWallet/> }/> }/>
 					<Route path="/clientFavourite" element={ <ClientFavourite/> }/>
+					<Route path="/clientOrderHistory" element={ <ClientOrderHistory/> }/>
 					<Route path="/requestMenu/:ownerID" element={ <ResNMenu/> }/>
 					<Route path="/checkout" element={ <CheckoutForm/> }/>
 					<Route path="/return" element={ <Return/> }/>

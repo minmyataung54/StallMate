@@ -85,7 +85,7 @@ router.get('/:seller_id/menu', isLoggedIn, async (req, res) => {
     try {
         const menu = await Menu.findOne({ seller: req.params.seller_id });
         if (!menu || menu.items.length === 0) {
-            return res.json({ message: 'No menu items available.', categories: [] });
+            return res.json({ message: 'No menu items available.', categories: [], qrcode_url: menu.qrcode_url});
         }
 
         const stallOwnerProfile = await StallOwnerProfile.findOne({ StallOwnerID: req.params.seller_id });
