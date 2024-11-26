@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import Loading from '../Loading';
@@ -41,6 +41,8 @@ const Return = () => {
 	const [ status, setStatus ] = useState(null);
 	const [ customerEmail, setCustomerEmail ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(true);
+	const [navigateToHome, setNavigateToHome] = useState(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		setIsLoading(true);
@@ -100,6 +102,15 @@ const Return = () => {
 		}
 	}, [status]);
 
+	if (status === 'complete' && !isLoading && !navigateToHome) {
+		setTimeout(() => {
+		  setNavigateToHome(true); 
+		}, 3000);
+	  }
+	  if (navigateToHome) {
+		navigate('/clientHome'); 
+		return null;
+	  }
 	if (status === 'open') {
 		return (
 			<Navigate to="/checkout" />

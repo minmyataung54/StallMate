@@ -1,0 +1,87 @@
+.rating-form-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #191A1F;
+  }
+
+  .rating-form-content {
+    width: 80vw;
+    max-width: 80vw;
+    padding: 5vw;
+    background-color: #000000;
+    border-radius: 5vw;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .rating-form-title {
+    text-align: center;
+    margin-bottom: 5vh;
+    color: white;
+  }
+
+  .rating-buttons {
+    margin-bottom: 4vh;
+  }
+
+  .rating-button {
+    margin: 0 2vw;
+    display: inline-block;
+  }
+
+  .rating-input {
+    appearance: none;
+    width: 5vw;
+    height: 5vw;
+    border-radius: 50%;
+    border: 0.5vw solid #4CF986;
+    background-color: #191A1F;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+
+  .rating-input:checked {
+    background-color: #4CF986;
+    border-color: #4CF986;
+  }
+
+  .rating-input:hover {
+    background-color: #2E3C3F;
+    border-color: #4CF986;
+  }
+
+  .rating-label {
+    font-size: 4vw;
+    margin-left: 1vw;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    transition: color 0.3s;
+  }
+
+  .submit-button {
+    width: 100%;
+    padding: 3vh;
+    font-size: 4vw;
+    background-color: #4CF986;
+    color: #000;
+    border: none;
+    border-radius: 10vw;
+    cursor: pointer;
+  }
+
+  .thank-you-message {
+    text-align: center;
+  }
+
+  .thank-you-title {
+    font-size: 5vw;
+  }
+
+  .thank-you-rating {
+    font-size: 4vw;
+  }

@@ -89,6 +89,7 @@ const CartItem = ({ cartItems, onContinueShopping }) => {
 					console.log('Place order successfully:', response.data);
 					alert('Place order successfully!');
 					localStorage.removeItem('cartData');
+					navigate('/clientHome');
 				} catch (error) {
 					console.error('Error place order:', error.response?.data || error.message);
 					// alert('Failed to Place order. Please check the details and try again.');
