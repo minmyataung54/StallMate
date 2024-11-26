@@ -26,8 +26,14 @@ const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 	const { authData } = useOwnerAuth();
 	const [ selectedRestaurant, setSelectedRestaurant ] = useState(null);
 	
+	/*restaurant_id: authData.ownerData.ownerID,
+        restaurant_name: stallOwnerProfile.restaurant.name,
+        restaurant_image: stallOwnerProfile.restaurant.photo,
+        rating: 0,
+        categories: categorizedMenu,
+        qrcode_url: menu.qrcode_url*/
+
 	const [ loading, setLoading ] = useState(true);
-	const [ restaurants, setRestaurants ] = useState([]);
 	const [ selectedLanguage, setSelectedLanguage ] = useState("English");
 	const [ selectedMenu, setSelectedMenu ] = useState(null);
 	const [ isResVisible, setIsResVisible ] = useState(false);
@@ -86,7 +92,7 @@ const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 			const response = await axios.put(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/menu`, 
 				formData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
 				console.log('Menu created successfully:', response.data);
-				setSelectedAddMenu({ imageUrl: null, name: "",description: "", price: 0, category: "" });
+				setSelectedAddMenu({ imageUrl: null, name: "", description: "", price: 0, category: "" });
 				setAddMenu(false);
 				alert('Menu created successfully!');
 				
@@ -104,9 +110,14 @@ const OwnerStallMenu = ({ HandleIsRenderStallMenu, stallProfile }) => {
 					headers: { "Cache-Control": "no-store", Pragma: "no-cache" }
 				});
                 if (response.status === 200) {
-                    setSelectedRestaurant(response.data); setSelectedRestaurant
-					setLoading(false);
-					console.log(response.data);
+					if (response.message === 'No menu items available.') {
+						setSelectedRestaurant(response.data);
+						setLoading(false);
+					} else {
+						setSelectedRestaurant(response.data);
+						setLoading(false);
+						console.log('Menu:', response.data);
+					}
                 } else {
                     setSelectedRestaurant(null);
 					setLoading(true);

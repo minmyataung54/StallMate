@@ -44,13 +44,17 @@ const ClientProfile = ({ userName, reviews, isLoading, onUpdateName }) => {
 		navigate("/clientEditProfile");
 	};
 
-	const handleWallet = () => {
-		console.log("wallet");
-	};
+	// const handleWallet = () => {
+	// 	console.log("wallet");
+	// };
 
-	const handleMastercard = () => {
-		console.log("Mastercard");
-	};
+	// const handleMastercard = () => {
+	// 	console.log("Mastercard");
+	// };
+
+	const handleFavorite = () => {
+		navigate("/clientFavourite");
+	}
 
 	return (
 
@@ -74,15 +78,14 @@ const ClientProfile = ({ userName, reviews, isLoading, onUpdateName }) => {
 							style={{ height: "45px" }}
 						>
 							<p className="mb-0 me-3">{authData?.clientData.clientName}</p>
-							{/* {isLoading ? "Loading..." : userName} */}
 							<i onClick={handleChangeName}>{PEN_ICON}</i>
 						</div>
 						<div
 							className="container d-flex justify-content-center align-items-center border-0 rounded-pill my-2"
-							style={{ height: "45px", backgroundColor: "#2B964F" }}
+							style={{ height: "45px", backgroundColor: "#2B964F" }} onClick={handleFavorite}
 						>
 							{STAR_ICON}
-							<div className="ms-2">{reviews}10 Reviews</div>
+							<div className="ms-2">Favorites</div>
 						</div>
 					</div>
 
@@ -96,7 +99,7 @@ const ClientProfile = ({ userName, reviews, isLoading, onUpdateName }) => {
 				</div>
 			</div>
 
-			<div className="container-fluid mt-5 ">
+			{/* <div className="container-fluid mt-5 ">
 				<div className="row d-flex justify-content-around">
 					<div
 						onClick={handleWallet}
@@ -132,21 +135,14 @@ const ClientProfile = ({ userName, reviews, isLoading, onUpdateName }) => {
 						<p className="text-white fw-bold">MasterCard</p>
 					</div>
 				</div>
-			</div>
+			</div> */}
+			<div style={{marginTop:"20vw"}}></div>
 
 			<div
 				className={`container-fluid my-3 pt-2 bg-black  text-white  mx-0 pb-2 border-0 rounded ${style.mockup}`}
 			>
 				<h5>General</h5>
-				<div className="d-flex justify-content-between">
-					<span>
-						<p>Favorites</p>
-					</span>
-					<span>
-						<p>&gt;</p>
-					</span>
-				</div>
-				<hr />
+				
 
 				<div className="d-flex justify-content-between">
 					<span>

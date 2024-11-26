@@ -26,16 +26,17 @@ const ClientLogin = () => {
 
     return (
         <div className="container d-flex flex-column justify-content-center align-items-center vh-100 p-0 m-0">
-            <img src={loginpic} alt="" className="img-fluid my-4 mx-auto d-flex" style={{ width: '80vw', height: '70vw' }} />
+            <div style={{marginTop:"35vw"}}></div>
+            <img src={loginpic} alt="" className="img-fluid mx-auto d-flex" style={{ width: '80vw', height: '70vw'}} />
             <p className="display-1 text-white my-4 font-weight-login" style={{ fontSize: '8vw' }}>Let's You In</p>
             <div className="card-body d-flex flex-column">
-                <button
+                {/* <button
                     className="btn mb-4 text-white" style={{ width: '90vw', height: '14vw', background: '#01040F', borderRadius: '2.8vw', fontSize: '3.5vw', fontWeight: '500' }}
                     onClick={handleFacebookLogin}
                 >
                     <img src={fblogo} alt="" style={{ width: '6.9vw', height: '6.9vw', marginRight: '3.5vw', alignItems: 'center' }} />
                     Continue with Facebook
-                </button>
+                </button> */}
                 <button
                     className="btn mb-4 text-white" style={{ width: '90vw', height: '14vw', background: '#01040F', borderRadius: '2.8vw', fontSize: '3.5vw', fontWeight: '500' }}
                     onClick={handleGoogleLogin}
@@ -43,21 +44,21 @@ const ClientLogin = () => {
                     <img src={gglogo} alt="" style={{ width: '6.9vw', height: '6.9vw', marginRight: '3.5vw', alignItems: 'center' }} />
                     Continue with Google
                 </button>
-                <button
+                {/* <button
                     className="btn mb-4 text-white" style={{ width: '90vw', height: '14vw', background: '#01040F', borderRadius: '2.8vw', fontSize: '3.5vw', fontWeight: '500' }}
                     onClick={handleAppleLogin}
                 >
                     <img src={aplogo} alt="" style={{ width: '6.9vw', height: '6.9vw', marginRight: '3.5vw', alignItems: 'center' }} />
                     Continue with Apple
-                </button>
+                </button> */}
                 <div className="d-flex align-items-center text-center mb-3 text-white">
                     <hr className='flex-fill' style={{ borderColor: 'white', height: '0.2vw' }} />
                     <span className='mx-2' style={{ fontSize: '3vw' }}>or</span>
                     <hr className='flex-fill' style={{ borderColor: 'white', height: '0.2vw' }} />
                 </div>
-                <button className="btn mb-4 text-white" style={{ width: '90vw', height: '14vw', background: '#02C543', borderRadius: '4vw', fontSize: '3.5vw', fontWeight: '500' }}>
+                {/* <button className="btn mb-4 text-white" style={{ width: '90vw', height: '14vw', background: '#02C543', borderRadius: '4vw', fontSize: '3.5vw', fontWeight: '500' }}>
                     Sign in with Contact Number
-                </button>
+                </button> */}
                 <div className="text-center">
                     <p className="text-white" style={{ fontSize: '3vw' }}> Create an account {' > '} <a href="/signup" className="text-success"> Sign Up </a> </p>
                 </div>
