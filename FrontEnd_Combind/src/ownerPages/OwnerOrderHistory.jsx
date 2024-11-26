@@ -5,14 +5,47 @@ import { useOwnerAuth } from "../utilities/OwnerAuthContext";
 import OrderHistoryCard from "../ownerComponents/OrderHistoryCard";
 import OrderDetailHistory from "../ownerComponents/OrderDetailHistory";
 import axios from "axios";
+import Loading from "../Loading";
 
 const BACK_END_BASE_URL = import.meta.env.VITE_API_BACK_END_BASE_URL;
 
 const OwnerOrderHistory = () => {
+  const [profile, setProfile] = useState("");
   const navigate = useNavigate();
   const { authData } = useOwnerAuth();
   const [ordersList, setOrdersList] = useState([]);
   const [checkList, setCheckList] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const profileAuth = async () => {
+      try {
+        const response = await axios.get(
+          `${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/profile`,
+          {
+            withCredentials: true,
+            headers: { "Cache-Control": "no-store", Pragma: "no-cache" },
+          }
+        );
+        console.log("Make order as completed:", response);
+
+        if (response.status === 200) {
+          setProfile(response.data.profile);
+          setLoading(false);
+        } else {
+          setProfile(null);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching pending orders:", error.message);
+        setProfile(null);
+        setLoading(false);
+      }
+    };
+    profileAuth();
+  }, []);
+
+  console.log(profile);
 
   useEffect(() => {
     const orderCompleteAuth = async () => {
@@ -78,12 +111,17 @@ const OwnerOrderHistory = () => {
     }, {});
   };
 
-  const groupedOrders = ordersList.length > 0 ? groupOrdersByDate(ordersList) : {};
+  const groupedOrders =
+    ordersList.length > 0 ? groupOrdersByDate(ordersList) : {};
 
   const handleCardClick = (order) => {
     setSelectedOrder(order);
     setDetail(true); // Show detail view
   };
+
+  if (loading === true) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -91,6 +129,7 @@ const OwnerOrderHistory = () => {
         <OrderDetailHistory
           detail={detail}
           setDetail={setDetail}
+          profile={profile}
           order={selectedOrder}
         />
       ) : (
@@ -130,6 +169,7 @@ const OwnerOrderHistory = () => {
                     <OrderHistoryCard
                       key={order.orderId}
                       order={order}
+                      profile={profile}
                       clickShowDetail={() => handleCardClick(order)}
                     />
                   ))}
@@ -137,7 +177,16 @@ const OwnerOrderHistory = () => {
               ))}
             </div>
           ) : (
-            <div className="text-white">No completed orders</div>
+            <div
+              className="row mt-2 d-flex justify-content-center"
+              style={{ width: "80%", margin: "0 auto" }}
+            >
+              <h4 className="text-white">No completed orders</h4>
+              <hr
+                className="text-white"
+                style={{ border: "2px solid white" }}
+              />
+            </div>
           )}
         </div>
       )}

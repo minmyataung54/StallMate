@@ -4,108 +4,158 @@ import { useState, useEffect } from "react";
 import OrderDetail from "../ownerComponents/OrderDetail";
 import { useOwnerAuth } from "../utilities/OwnerAuthContext";
 import axios from "axios";
+import Loading from "../Loading";
 
 const LEFT_ARROW = (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width="30"
-		height="30"
-		fill="currentColor"
-		className="bi bi-arrow-left"
-		viewBox="0 0 16 16"
-	>
-		<path
-			fillRule="evenodd"
-			d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
-		/>
-	</svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="30"
+    height="30"
+    fill="currentColor"
+    className="bi bi-arrow-left"
+    viewBox="0 0 16 16"
+  >
+    <path
+      fillRule="evenodd"
+      d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
+    />
+  </svg>
 );
 
 const OrderQueue = () => {
-	const BACK_END_BASE_URL = import.meta.env.VITE_API_BACK_END_BASE_URL;
-	const { authData } = useOwnerAuth();
-	const navigate = useNavigate();
+  const BACK_END_BASE_URL = import.meta.env.VITE_API_BACK_END_BASE_URL;
+  const { authData } = useOwnerAuth();
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState({
+    owner_profile: {},
+    restaurant: null,
+  });
+  const [detail, setDetail] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [orderList, setOrderList] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-	const [detail, setDetail] = useState(false);
-	const [selectedOrder, setSelectedOrder] = useState(null);
-	const [orderList, setOrderList] = useState(null);
+  useEffect(() => {
+    const profileAuth = async () => {
+      try {
+        const response = await axios.get(
+          `${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/profile`,
+          {
+            withCredentials: true,
+            headers: { "Cache-Control": "no-store", Pragma: "no-cache" },
+          }
+        );
+        console.log("Make order as completed:", response);
 
-	// Fetch pending orders
-	useEffect(() => {
-		const fetchOrders = async () => {
-			try {
-				const response = await axios.get(`${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/orders/pending`,
-					{ withCredentials: true, headers: { "Cache-Control": "no-store", Pragma: "no-cache" }}
-				);
-				setOrderList(response.data.orders);
-			} catch (error) {
-				console.error("Error fetching pending orders:", error.message);
-			}
-		};
-		fetchOrders();
-	}, [detail]);
+        if (response.status === 200) {
+          setProfile(response.data.profile);
+          setLoading(false);
+        } else {
+          setProfile(null);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching pending orders:", error.message);
+        setProfile(null);
+        setLoading(false);
+      }
+    };
+    profileAuth();
+  }, []);
 
-	const handleBackBtn = () => {
-		navigate("/ownerStallProfile");
-	};
+  console.log(profile);
 
-	const handleCardClick = (order) => {
-		setSelectedOrder(order);
-		setDetail(!detail);
-	};
+  // Fetch pending orders
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get(
+          `${BACK_END_BASE_URL}/dashboard/stallowner/${authData?.ownerData.ownerID}/orders/pending`,
+          {
+            withCredentials: true,
+            headers: { "Cache-Control": "no-store", Pragma: "no-cache" },
+          }
+        );
+        setOrderList(response.data.orders);
+      } catch (error) {
+        console.error("Error fetching pending orders:", error.message);
+      }
+    };
+    fetchOrders();
+  }, [detail]);
 
-	return (
-		<>
-			{detail ? (
-				<OrderDetail detail={detail} setDetail={setDetail} order={selectedOrder} />
-			) : (
-				<div className="container-fluid d-flex flex-column p-0">
-					<div className="container-fluid" style={{ minHeight: "14%" }}>
-						<div className="row d-flex">
-							<i
-								className="text-white col-2 align-self-start my-3 ms-2 px-0"
-								onClick={handleBackBtn}
-							>
-								{LEFT_ARROW}
-							</i>
-							<div className="text-white col-8 align-self-end mt-4 mx-0 ms-2">
-								<div
-									className="d-flex justify-content-start"
-									style={{ fontSize: "2em", padding: "0px" }}
-								>
-									Order Queue
-								</div>
-							</div>
-						</div>
-					</div>
+  const handleBackBtn = () => {
+    navigate("/ownerStallProfile");
+  };
 
-					<div
-						className="row mt-2 d-flex justify-content-center"
-						style={{ width: "80%", margin: "0 auto" }}
-					>
-						<h4 className="text-white">
-							{orderList && orderList.length > 0 ? "Pending" : "No Pending Queue"}
-						</h4>
-						<hr className="text-white" style={{ border: "2px solid white" }} />
-					</div>
+  const handleCardClick = (order) => {
+    setSelectedOrder(order);
+    setDetail(!detail);
+  };
 
-					{orderList && orderList.length > 0 ? (
-						<div>
-							{orderList.map((order) => (
-								<OrderQueueCard
-									key={order.orderId}
-									clickShowDetail={() => handleCardClick(order)}
-									order={order}
-								/>
-							))}
-						</div>
-					) : (
-						<div className="text-center mt-4">No Pending Queue</div>
-					)}
-				</div>
-			)}
-		</>
-	);
+  if (loading === true) {
+    return <Loading />;
+  }
+  return (
+    <>
+      {detail ? (
+        <OrderDetail
+          detail={detail}
+          setDetail={setDetail}
+          order={selectedOrder}
+          profile={profile.restaurant ? profile : {}}
+        />
+      ) : (
+        <div className="container-fluid d-flex flex-column p-0">
+          <div className="container-fluid" style={{ minHeight: "14%" }}>
+            <div className="row d-flex">
+              <i
+                className="text-white col-2 align-self-start my-3 ms-2 px-0"
+                onClick={handleBackBtn}
+              >
+                {LEFT_ARROW}
+              </i>
+              <div className="text-white col-8 align-self-end mt-4 mx-0 ms-2">
+                <div
+                  className="d-flex justify-content-start"
+                  style={{ fontSize: "2em", padding: "0px" }}
+                >
+                  Order Queue
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="row mt-2 d-flex justify-content-center"
+            style={{ width: "80%", margin: "0 auto" }}
+          >
+            <h4 className="text-white">
+              {orderList && orderList.length > 0
+                ? "Pending"
+                : "No Pending Queue"}
+            </h4>
+            <hr className="text-white" style={{ border: "2px solid white" }} />
+          </div>
+
+          {orderList && orderList.length > 0 ? (
+            <div>
+              {orderList.map((order) => (
+                <OrderQueueCard
+                  key={order.orderId}
+                  clickShowDetail={() => handleCardClick(order)}
+                  order={order}
+                  profile={profile.restaurant ? profile : {}}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center mt-4"></div>
+          )}
+        </div>
+      )}
+    </>
+  );
 };
 
 export default OrderQueue;

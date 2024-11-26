@@ -1,6 +1,6 @@
 import React from "react";
 
-const OrderHistoryCard = ({ clickShowDetail, order}) => {
+const OrderHistoryCard = ({ clickShowDetail, order, profile }) => {
   return (
     <div
       className="text-white"
@@ -12,12 +12,12 @@ const OrderHistoryCard = ({ clickShowDetail, order}) => {
         padding: "0",
         borderRadius: "10px",
       }}
-        onClick={clickShowDetail}
+      onClick={clickShowDetail}
     >
       <div className="row mt-2 p-0">
         <div className="col-4 mt-2 ms-2">
           <div className="text-success h6 ms-2">Complete</div>
-          <img src="src/assets/cakedhome.png" alt="" style={{ width: "6em" }} />
+          <img src={profile.restaurant.photo} alt="" style={{ width: "6em" }} />
         </div>
         <div className="col-7 d-flex-column justify-content-between mt-3">
           <div>

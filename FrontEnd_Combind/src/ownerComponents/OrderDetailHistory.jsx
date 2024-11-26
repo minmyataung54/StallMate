@@ -1,6 +1,6 @@
 import OrderDetailCard from "./OrderDetailCard";
 import { format } from "date-fns";
-const OrderDetailHistory = ({ detail, setDetail, order }) => {
+const OrderDetailHistory = ({ detail, setDetail, order, profile }) => {
   const LEFT_ARROW = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -58,8 +58,10 @@ const OrderDetailHistory = ({ detail, setDetail, order }) => {
         </div>
       </div>
       <div className="row d-flex">
-        <img className="col-4"src="src/assets/cakedhome.png" alt="" />
-        <h5 className="col-8 text-white align-self-center">Siam Basserie{}</h5>
+        <img className="col-4" src={profile.restaurant.photo} alt="" />
+        <h5 className="col-8 text-white align-self-center">
+          {profile.restaurant.name}
+        </h5>
       </div>
       <div className="row d-flex"></div>
       <h6 className="col-3 d-felx ms-4">Menu</h6>
